@@ -158,6 +158,29 @@ section.panel{padding-top:1.2rem}
 #mapa-svg .carro{cursor:grab;will-change:transform}
 #mapa-svg .carro.drag{cursor:grabbing}
 #mapa-svg .carro:focus-visible{outline:none}
+.legend{display:flex;flex-wrap:wrap;gap:.5rem 1.1rem;font-size:.8rem;color:var(--muted);padding:.5rem .4rem 0;font-weight:700}
+.legend .lg{display:inline-block;width:26px;height:0;border-top:4px solid var(--coral);vertical-align:middle;margin-right:.35rem}
+.legend .lg.dash{border-top-style:dashed;border-top-width:3px;border-color:var(--sun)}
+.legend .lg.dot{border-top-style:dotted;border-color:var(--lilac)}
+.legend .lg.num{width:20px;height:20px;border:0;border-radius:50%;background:#1b2340;color:#fff;font-style:normal;font-family:var(--display);font-size:.7rem;display:inline-grid;place-items:center}
+#rota path{fill:none;stroke-linecap:round;stroke-linejoin:round;cursor:pointer;transition:opacity .2s}
+#rota path.move{stroke-width:5}
+#rota path.trip{stroke-width:3;stroke-dasharray:7 6}
+#rota path.fly{stroke-width:3;stroke-dasharray:2 7}
+#rota .hit{stroke:transparent;stroke-width:18;fill:none;cursor:pointer}
+#rota.sel path:not(.on){opacity:.18}
+#rota .badge circle{fill:#1b2340;stroke:#fff;stroke-width:2}
+#rota .badge text{fill:#fff;font-family:var(--display);font-weight:800;font-size:12px;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+#rota .badge.on circle{fill:var(--coral)}
+#rota .plane{font-size:16px;pointer-events:none}
+.legs{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:.5rem;margin:.5rem 0 1rem}
+.leg{display:grid;grid-template-columns:30px 1fr auto;gap:.5rem;align-items:center;background:var(--surface);border-radius:12px;padding:.55rem .7rem;border:0;text-align:left;cursor:pointer;font-family:var(--body);color:var(--ink);box-shadow:0 1px 0 var(--line);border-left:5px solid var(--line)}
+.leg .n{width:26px;height:26px;border-radius:50%;background:#1b2340;color:#fff;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:.8rem}
+.leg[aria-pressed="true"]{outline:3px solid var(--ink)}
+.leg[aria-pressed="true"] .n{background:var(--coral)}
+.leg b{font-family:var(--display);font-size:.95rem;display:block}
+.leg .w{font-size:.8rem;color:var(--muted);font-weight:700}
+.leg .tm{font-family:var(--display);font-weight:800;font-size:.85rem;white-space:nowrap}
 .mapinfo{margin:.6rem .3rem 0;padding:.7rem .9rem;background:var(--aqua-soft);border-radius:12px;font-size:.95rem}
 .mapinfo .daycard{margin-top:.7rem;box-shadow:none}
 .mapinfo .daycard .ph{aspect-ratio:16/5}
@@ -237,7 +260,7 @@ footer{margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--line);color
 
 <!-- ===== MAPA ===== -->
 <section class="panel" id="p-mapa" role="tabpanel" hidden>
-  <p>Arraste o carrinho ou clique num destino. A linha pontilhada é a ordem da viagem.</p>
+  <p>As setas numeradas são o percurso de carro, na ordem da viagem: linha cheia é mudança de base, tracejada é bate-volta, pontilhada é avião ou ferry. Clique num número, num trecho da lista ou num destino; o carrinho vai até lá e a programação aparece.</p>
   <div class="mapbox">
   <svg id="mapa-svg" viewBox="0 0 1200 460" role="img" aria-label="Mapa de Porto Rico com os destinos da viagem e um carrinho arrastável">
     <defs><filter id="sh" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000" flood-opacity=".25"/></filter></defs>
@@ -251,7 +274,7 @@ footer{margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--line);color
     <text x="1010" y="335" class="maplabel" text-anchor="middle">Vieques</text>
     <text x="1098" y="212" class="maplabel" text-anchor="middle">Culebra</text>
     <text x="520" y="215" class="maplabel big" text-anchor="middle">PORTO RICO</text>
-    <polyline points="710,91 884,143 920,166 1099,177 920,166 316,80 142,337 203,371 429,349 710,91 1012,297" fill="none" stroke="var(--coral)" stroke-width="3" stroke-dasharray="8 8" stroke-linejoin="round" opacity=".7"/>
+    <g id="rota"></g>
     <g id="pins"></g>
     <g id="carro" class="carro" tabindex="0" role="button" aria-label="Carrinho da família, arraste para um destino">
       <g transform="translate(-52,-36) scale(.62)" filter="url(#sh)">
@@ -273,9 +296,12 @@ footer{margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--line);color
       </g>
     </g>
   </svg>
+  <div class="legend"><span><i class="lg solid"></i>mudança de base (carro)</span><span><i class="lg dash"></i>bate-volta (carro)</span><span><i class="lg dot"></i>avião / ferry</span><span><i class="lg num">3</i>número do trecho</span></div>
   <div id="mapa-info" class="mapinfo" hidden></div>
   </div>
-  <p class="small">Em Culebra e Vieques o carrinho vira avião ou ferry, mas ele não sabe disso.</p>
+  <h3>Percurso, trecho a trecho</h3>
+  <p class="small">Clique num trecho: ele acende no mapa, o carrinho vai até o destino e a programação do dia aparece.</p>
+  <div id="legs" class="legs"></div>
 </section>
 
 <!-- ===== TAREFAS ===== -->
@@ -455,10 +481,48 @@ function selectDay(id){
   D.forEach(p=>{const g=document.createElementNS(NS,'g');g.setAttribute('class','pin');g.setAttribute('transform',`translate(${p.x},${p.y})`);g.setAttribute('tabindex','0');g.setAttribute('role','button');g.setAttribute('aria-label',p.n);
     g.innerHTML=`<circle r="16" class="halo"/><circle r="8" class="dot"/><text y="-18" text-anchor="middle" class="pinlabel">${p.n}</text>`;
     g.addEventListener('click',()=>go(p));g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go(p);}});pins.appendChild(g);});
+  /* trechos do percurso */
+  const LEGS=[
+    {n:1,date:'18/12',day:'1812',from:'Aeroporto SJU',to:'San Juan (Condado)',mode:'move',time:'15 min',col:'#12b5b0',d:'M740 70 L712 90',end:[710,91]},
+    {n:2,date:'21/12',day:'2112',from:'San Juan',to:'Arecibo (Cueva Ventana) e volta',mode:'trip',time:'1h15 cada',col:'#ffc531',d:'M710 91 C620 70 480 70 383 126',end:[383,126]},
+    {n:3,date:'24/12',day:'2412',from:'San Juan',to:'Luquillo',mode:'move',time:'45 min',col:'#4cae3f',d:'M710 91 C780 90 840 110 884 143',end:[884,143]},
+    {n:4,date:'26/12',day:'2612',from:'Luquillo',to:'El Yunque e volta',mode:'trip',time:'25 min cada',col:'#ffc531',d:'M884 143 C870 160 860 170 848 183',end:[848,183]},
+    {n:5,date:'27/12',day:'2712',from:'Luquillo → Ceiba (30 min)',to:'Culebra, de avião ou ferry',mode:'fly',time:'15 min voo / 1h ferry',col:'#9b6cf0',d:'M884 143 L920 166 C980 140 1040 150 1099 177',end:[1099,177]},
+    {n:6,date:'28/12',day:'2812',from:'Luquillo',to:'Hatillo (2h) → Boquerón (1h45)',mode:'move',time:'3h45 + paradas',col:'#e0a800',d:'M884 143 C800 90 600 60 316 80 C200 90 110 120 95 200 C90 260 95 320 142 337',end:[142,337]},
+    {n:7,date:'29/12',day:'2912',from:'Boquerón',to:'Farol de Cabo Rojo e volta',mode:'trip',time:'20 min cada',col:'#ffc531',d:'M142 337 C128 355 125 375 132 394',end:[132,394]},
+    {n:8,date:'30/12',day:'3012',from:'Boquerón',to:'Guánica de manhã, La Parguera à noite',mode:'trip',time:'50 min / 35 min',col:'#ffc531',d:'M142 337 C170 360 190 380 203 371 C230 380 255 380 275 371',end:[275,371]},
+    {n:9,date:'31/12',day:'3112',from:'Boquerón',to:'Ponce (1h) → San Juan (1h20)',mode:'move',time:'2h20 + Ponce',col:'#ff5fa2',d:'M142 337 C200 390 330 372 429 349 C520 250 620 150 710 91',end:[710,91]},
+    {n:10,date:'02/01',day:'0201',from:'San Juan (devolve o carro no SJU)',to:'Vieques, de avião',mode:'fly',time:'25 min voo',col:'#9b6cf0',d:'M710 91 C820 150 920 250 1012 297',end:[1012,297]},
+    {n:11,date:'04/01',day:'0401',from:'Vieques, de avião',to:'SJU → hotel em Isla Verde (5 min)',mode:'fly',time:'25 min voo',col:'#9b6cf0',d:'M1012 297 C930 230 820 130 745 80',end:[745,80]},
+  ];
+  const rota=$('#rota'),legsEl=$('#legs');
+  LEGS.forEach(l=>{
+    const hit=document.createElementNS(NS,'path');hit.setAttribute('d',l.d);hit.setAttribute('class','hit');hit.addEventListener('click',()=>selLeg(l));rota.appendChild(hit);
+    const mk=document.createElementNS(NS,'marker');mk.setAttribute('id','arr'+l.n);mk.setAttribute('viewBox','0 0 10 10');mk.setAttribute('refX','8');mk.setAttribute('refY','5');mk.setAttribute('markerWidth','5');mk.setAttribute('markerHeight','5');mk.setAttribute('orient','auto');mk.innerHTML=`<path d="M0 0 L10 5 L0 10 z" fill="${l.col}"/>`;svg.querySelector('defs').appendChild(mk);
+    const path=document.createElementNS(NS,'path');path.setAttribute('d',l.d);path.setAttribute('class',l.mode);path.setAttribute('stroke',l.col);path.setAttribute('marker-end','url(#arr'+l.n+')');path.dataset.n=l.n;path.addEventListener('click',()=>selLeg(l));rota.appendChild(path);
+    const len=path.getTotalLength();const m=path.getPointAtLength(len*0.5);
+    const g=document.createElementNS(NS,'g');g.setAttribute('class','badge');g.dataset.n=l.n;g.innerHTML=`<circle cx="${m.x}" cy="${m.y}" r="11"/><text x="${m.x}" y="${m.y}">${l.n}</text>`;g.addEventListener('click',()=>selLeg(l));g.style.cursor='pointer';rota.appendChild(g);
+    if(l.mode==='fly'){const q=path.getPointAtLength(len*0.72);const t=document.createElementNS(NS,'text');t.setAttribute('x',q.x);t.setAttribute('y',q.y-10);t.setAttribute('class','plane');t.setAttribute('text-anchor','middle');t.textContent='✈️';rota.appendChild(t);}
+    const b=document.createElement('button');b.className='leg';b.style.borderLeftColor=l.col;b.dataset.n=l.n;b.setAttribute('aria-pressed','false');
+    b.innerHTML=`<span class="n">${l.n}</span><span><span class="w">${l.date} · ${l.mode==='move'?'mudança de base':l.mode==='trip'?'bate-volta':'avião / ferry'}</span><b>${l.from} → ${l.to}</b></span><span class="tm">${l.time}</span>`;
+    b.addEventListener('click',()=>selLeg(l));legsEl.appendChild(b);
+  });
+  function selLeg(l){
+    rota.classList.add('sel');
+    rota.querySelectorAll('path,.badge').forEach(el=>el.classList.toggle('on',el.dataset.n==l.n));
+    legsEl.querySelectorAll('.leg').forEach(b=>b.setAttribute('aria-pressed',b.dataset.n==l.n));
+    document.querySelectorAll('.pin').forEach(el=>el.classList.remove('on'));
+    setCar(l.end[0],l.end[1],true);
+    const i=DAYS.findIndex(q=>q.id===l.day);const d=DAYS[i];
+    info.hidden=false;info.innerHTML=`<div class="mapinfo-head"><b>Trecho ${l.n} · ${l.date}</b> · ${l.from} → ${l.to} · <b>${l.time}</b></div>${dayHTML(d,i,false)}<div class="links" style="margin:-.2rem 0 .6rem"><button class="btn sm coral" id="legOpen">Abrir ${l.date} na aba Dia a dia</button></div>`;
+    $('#legOpen').onclick=()=>{showTab('dias');selectDay(l.day);};
+    info.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+
   let cur={x:710,y:91};
   function setCar(x,y,anim){car.style.transition=anim?'transform .9s cubic-bezier(.4,.1,.2,1)':'none';car.style.transform=`translate(${x}px,${y}px)`;cur={x,y};}
   setCar(710,91,false);
-  function go(p){setCar(p.x,p.y,true);document.querySelectorAll('.pin').forEach(el=>el.classList.toggle('on',el.getAttribute('aria-label')===p.n));
+  function go(p){rota.classList.remove('sel');rota.querySelectorAll('.on').forEach(el=>el.classList.remove('on'));legsEl.querySelectorAll('.leg').forEach(b=>b.setAttribute('aria-pressed','false'));setCar(p.x,p.y,true);document.querySelectorAll('.pin').forEach(el=>el.classList.toggle('on',el.getAttribute('aria-label')===p.n));
     const list=p.days.map(x=>[DAYS.findIndex(q=>q.id===x),DAYS.find(q=>q.id===x)]);
     const jump=list.length>1?`<div class="links">${list.map(([i,d])=>`<button class="btn sm" data-j="${d.id}">${d.w} ${d.d}</button>`).join('')}</div>`:'';
     const cards=list.map(([i,d])=>`<div id="m-${d.id}">${dayHTML(d,i,false)}<div class="links" style="margin:-.2rem 0 .8rem"><button class="btn sm coral" data-open="${d.id}">Abrir ${d.d} na aba Dia a dia</button></div></div>`).join('');
