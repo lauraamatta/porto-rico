@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Porto Rico em Família</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Nunito:ital,wght@0,400;0,700;0,900;1,400&display=swap">
+<style>
+/* Layout: app de abas; cada aba é uma tela curta, com cards grandes e botões. Cores vivas de festa caribenha. */
+:root{
+  --bg:#fffdf6;          /* branco quente */
+  --surface:#ffffff;
+  --ink:#1b2340;         /* azul noite */
+  --muted:#5f6886;
+  --line:#e6e4f0;
+  --coral:#ff6b57; --coral-soft:#ffe4df;
+  --aqua:#12b5b0;  --aqua-soft:#d9f6f3;
+  --sun:#ffc531;   --sun-soft:#fff2c7;
+  --lilac:#9b6cf0; --lilac-soft:#ece3ff;
+  --lime:#7ed957;  --lime-soft:#e5f8d8;
+  --pink:#ff5fa2;
+  --glow:#28e0b6;
+  --display:"Bricolage Grotesque","Trebuchet MS",Arial,sans-serif;
+  --body:"Nunito","Segoe UI",Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141a2e;--surface:#1d2440;--ink:#f3f1ff;--muted:#aab0cc;--line:#2f3759;
+  --coral:#ff7d6a;--coral-soft:#4a2a2a;--aqua:#2fd1cb;--aqua-soft:#143d3c;--sun:#ffd25a;--sun-soft:#4a3d14;
+  --lilac:#b48cff;--lilac-soft:#33295a;--lime:#93e86f;--lime-soft:#223a1b;--pink:#ff7ab8;--glow:#3cf0c6;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141a2e;--surface:#1d2440;--ink:#f3f1ff;--muted:#aab0cc;--line:#2f3759;
+  --coral:#ff7d6a;--coral-soft:#4a2a2a;--aqua:#2fd1cb;--aqua-soft:#143d3c;--sun:#ffd25a;--sun-soft:#4a3d14;
+  --lilac:#b48cff;--lilac-soft:#33295a;--lime:#93e86f;--lime-soft:#223a1b;--pink:#ff7ab8;--glow:#3cf0c6;color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.5;margin:0}
+a{color:var(--aqua);font-weight:700;text-decoration:none;border-bottom:2px solid var(--aqua-soft)}
+a:hover{color:var(--coral);border-color:var(--coral-soft)}
+a:focus-visible,button:focus-visible,select:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.1;text-wrap:balance;margin:0}
+h1{font-size:clamp(2rem,6vw,3.2rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(1.4rem,4vw,1.9rem);font-weight:800;margin-block:0 .6rem}
+h3{font-size:1.15rem;font-weight:800;margin-block:1rem .4rem}
+p{margin:0 0 .7rem;max-width:66ch}
+ul{padding-left:1.2rem;margin:0 0 .6rem;max-width:66ch}
+li{margin-bottom:.3rem}
+.small{font-size:.88rem;color:var(--muted)}
+.wrap{max-width:960px;margin:0 auto;padding-inline:16px;padding-block:0 90px}
+
+/* topo */
+.hero{display:flex;flex-wrap:wrap;gap:.8rem 1.5rem;align-items:center;padding-block:1.4rem .6rem}
+.hero .sun{width:64px;height:64px;flex:none}
+.hero .sub{color:var(--muted);font-weight:700}
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:.5rem;margin-inline:-16px;padding-inline:16px;display:flex;gap:.4rem;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line)}
+nav.tabs button{flex:none;border:0;background:var(--surface);color:var(--ink);font-family:var(--display);font-weight:800;font-size:.95rem;padding:.55rem .95rem;border-radius:999px;cursor:pointer;box-shadow:0 1px 0 var(--line)}
+nav.tabs button[aria-selected="true"]{background:var(--ink);color:#fff}
+nav.tabs button .n{display:inline-block;min-width:1.3em;padding:0 .35em;margin-left:.3em;border-radius:999px;background:var(--coral);color:#fff;font-size:.75rem;text-align:center}
+section.panel{padding-top:1.2rem}
+
+/* componentes */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.9rem;margin-block:.6rem 1rem}
+.card{background:var(--surface);border-radius:16px;padding:1rem 1.1rem;min-width:0;border-top:6px solid var(--aqua);box-shadow:0 2px 10px rgba(27,35,64,.06)}
+.card.coral{border-top-color:var(--coral)}.card.sun{border-top-color:var(--sun)}.card.lilac{border-top-color:var(--lilac)}.card.lime{border-top-color:var(--lime)}.card.pink{border-top-color:var(--pink)}
+.card h3{margin-top:0}
+.card p{font-size:.95rem;margin-bottom:.4rem}
+.eyebrow{font-family:var(--display);text-transform:uppercase;letter-spacing:.1em;font-size:.72rem;font-weight:800;color:var(--muted)}
+.big{font-family:var(--display);font-weight:800;font-size:1.8rem;font-variant-numeric:tabular-nums;line-height:1}
+.btn{display:inline-flex;align-items:center;gap:.35rem;border:0;border-radius:999px;padding:.5rem .95rem;font-family:var(--display);font-weight:800;font-size:.9rem;cursor:pointer;background:var(--aqua-soft);color:var(--ink);text-decoration:none;white-space:nowrap}
+.btn:hover{background:var(--aqua);color:#fff}
+.btn.coral{background:var(--coral-soft)}.btn.coral:hover{background:var(--coral);color:#fff}
+.btn.solid{background:var(--ink);color:#fff}.btn.solid:hover{background:var(--coral)}
+.btn.sm{padding:.3rem .7rem;font-size:.8rem}
+.links{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem}
+.chip{display:inline-block;font-family:var(--display);font-weight:800;font-size:.74rem;padding:.15rem .55rem;border-radius:999px;background:var(--line);color:var(--ink);white-space:nowrap}
+.chip.e1{background:var(--lime-soft)}.chip.e2{background:var(--sun-soft)}.chip.e3{background:var(--coral-soft)}.chip.bio{background:var(--glow);color:#073a2d}.chip.who{background:var(--aqua-soft)}
+.note{border-radius:12px;padding:.7rem .9rem;font-size:.93rem;margin:.5rem 0;background:var(--sun-soft)}
+.note.aqua{background:var(--aqua-soft)}.note.coral{background:var(--coral-soft)}.note.lilac{background:var(--lilac-soft)}
+
+/* quem está quando */
+.gantt{display:grid;gap:.45rem;margin:.6rem 0 1rem}
+.gantt .row{display:grid;grid-template-columns:130px 1fr;gap:.6rem;align-items:center;font-size:.9rem;font-weight:700}
+.gantt .track{position:relative;height:30px;background:var(--line);border-radius:999px;min-width:0}
+.gantt .bar{position:absolute;top:0;height:30px;border-radius:999px;display:flex;align-items:center;padding-inline:.7rem;color:#fff;font-family:var(--display);font-weight:800;font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gantt .scale{display:grid;grid-template-columns:130px 1fr}.gantt .scale div{display:flex;justify-content:space-between;color:var(--muted);font-size:.75rem;font-variant-numeric:tabular-nums}
+@media (max-width:520px){.gantt .row,.gantt .scale{grid-template-columns:1fr}.gantt .row span{margin-bottom:-.2rem}}
+
+/* bases timeline */
+.timeline{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;margin:.6rem 0 1rem}
+.tl{border-radius:14px;padding:.8rem .9rem;color:#fff;min-width:0;cursor:pointer;border:0;text-align:left;font-family:var(--body)}
+.tl b{display:block;font-family:var(--display);font-size:1.05rem;line-height:1.15}
+.tl span{font-size:.8rem;opacity:.95;font-weight:700}
+.tl:hover{filter:brightness(1.08)}
+
+/* dias */
+.datestrip{display:flex;gap:.4rem;overflow-x:auto;padding-block:.4rem;scrollbar-width:thin}
+.datestrip button{flex:none;border:0;border-radius:12px;background:var(--surface);box-shadow:0 1px 0 var(--line);padding:.45rem .6rem;cursor:pointer;font-family:var(--display);font-weight:800;color:var(--ink);min-width:58px;line-height:1.1}
+.datestrip button small{display:block;font-size:.65rem;color:var(--muted);font-weight:800;text-transform:uppercase}
+.datestrip button[aria-selected="true"]{background:var(--coral);color:#fff}
+.datestrip button[aria-selected="true"] small{color:#fff}
+.datestrip button.b1{border-bottom:4px solid var(--aqua)}.datestrip button.b2{border-bottom:4px solid var(--lime)}.datestrip button.b3{border-bottom:4px solid var(--sun)}.datestrip button.b4{border-bottom:4px solid var(--pink)}.datestrip button.b5{border-bottom:4px solid var(--lilac)}
+.daycard{background:var(--surface);border-radius:18px;padding:1.1rem 1.2rem;margin-top:.8rem;box-shadow:0 2px 10px rgba(27,35,64,.06)}
+.daycard .head{display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:center;margin-bottom:.6rem}
+.daycard .head h2{margin:0}
+.daycard .chips{display:flex;flex-wrap:wrap;gap:.3rem}
+.blocks{display:grid;gap:.6rem}
+.blk{display:grid;grid-template-columns:46px 1fr;gap:.6rem;align-items:start;padding:.6rem .7rem;border-radius:12px;background:var(--bg)}
+.blk .ic{font-size:1.5rem;line-height:1.2;text-align:center}
+.blk .t{font-family:var(--display);font-weight:800;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.blk.nap{background:var(--lilac-soft)}.blk.nap .t{color:var(--lilac)}
+.blk ul{margin:.2rem 0 0;padding-left:1.1rem;font-size:.95rem}
+.blk li{margin-bottom:.2rem}
+.daynav{display:flex;justify-content:space-between;gap:.5rem;margin-top:.8rem}
+
+/* tarefas */
+.people{display:flex;flex-wrap:wrap;gap:.5rem;margin:.4rem 0 1rem}
+.person{border:0;border-radius:14px;padding:.6rem .9rem;cursor:pointer;background:var(--surface);box-shadow:0 1px 0 var(--line);text-align:left;min-width:150px;font-family:var(--body);color:var(--ink)}
+.person[aria-pressed="true"]{outline:3px solid var(--ink)}
+.person .nm{display:flex;align-items:center;gap:.5rem;font-family:var(--display);font-weight:800}
+.av{width:28px;height:28px;border-radius:50%;display:inline-grid;place-items:center;color:#fff;font-family:var(--display);font-weight:800;font-size:.85rem;flex:none}
+.av.laura{background:var(--coral)}.av.amanda{background:var(--aqua)}.av.mamae{background:var(--lilac)}.av.victor{background:#e0a800}.av.todos{background:var(--ink)}
+.bar{height:8px;border-radius:999px;background:var(--line);margin-top:.4rem;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--lime);width:0;transition:width .4s}
+.tasks{display:grid;gap:.7rem}
+.task{display:grid;grid-template-columns:auto 1fr;gap:.8rem;background:var(--surface);border-radius:16px;padding:.9rem 1rem;box-shadow:0 2px 10px rgba(27,35,64,.06);border-left:6px solid var(--line)}
+.task.laura{border-left-color:var(--coral)}.task.amanda{border-left-color:var(--aqua)}.task.mamae{border-left-color:var(--lilac)}.task.victor{border-left-color:#e0a800}
+.task.done{opacity:.6}.task.done .ttl{text-decoration:line-through}
+.task input[type=checkbox]{width:26px;height:26px;margin-top:.1rem;accent-color:var(--lime);cursor:pointer}
+.task .ttl{font-family:var(--display);font-weight:800;font-size:1.05rem}
+.task .meta{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin:.3rem 0;font-size:.85rem}
+.task .due{font-weight:900;padding:.1rem .5rem;border-radius:999px;background:var(--sun-soft)}
+.task .due.late{background:var(--coral-soft);color:var(--coral)}
+.task .due.soon{background:var(--coral-soft)}
+.task select{border:1px solid var(--line);border-radius:8px;padding:.15rem .4rem;font-family:var(--body);font-weight:700;background:var(--surface);color:var(--ink)}
+.task .desc{font-size:.93rem;color:var(--muted);margin:0}
+.task .links .btn{font-size:.82rem;padding:.35rem .75rem}
+.sync{font-size:.82rem;color:var(--muted);display:flex;gap:.4rem;align-items:center;margin-top:.5rem}
+.sync i{width:9px;height:9px;border-radius:50%;background:var(--sun);display:inline-block}
+.sync.on i{background:var(--lime)}.sync.off i{background:var(--coral)}
+
+/* hotéis */
+.hrow{display:grid;grid-template-columns:1fr auto;gap:.4rem .8rem;align-items:center;padding:.55rem 0;border-bottom:1px solid var(--line);font-size:.93rem}
+.hrow b{font-family:var(--display)}
+.hrow .pr{font-weight:900;color:var(--coral);white-space:nowrap}
+.hrow .w{color:var(--muted);font-size:.82rem}
+
+/* mapa */
+.mapbox{background:var(--surface);border-radius:18px;padding:.6rem;margin:.6rem 0;box-shadow:0 2px 10px rgba(27,35,64,.06)}
+#mapa-svg{width:100%;height:auto;display:block;touch-action:none;user-select:none}
+#mapa-svg .land{fill:var(--sun-soft);stroke:var(--aqua);stroke-width:3;stroke-linejoin:round}
+#mapa-svg .maplabel{font-family:var(--display);font-weight:800;font-size:14px;fill:var(--muted);letter-spacing:.08em}
+#mapa-svg .maplabel.big{font-size:24px;fill:var(--ink);letter-spacing:.2em}
+#mapa-svg .pin{cursor:pointer}
+#mapa-svg .pin .halo{fill:var(--coral);opacity:0;transition:opacity .2s}
+#mapa-svg .pin:hover .halo,#mapa-svg .pin.on .halo,#mapa-svg .pin:focus-visible .halo{opacity:.3}
+#mapa-svg .pin .dot{fill:var(--coral);stroke:var(--surface);stroke-width:3}
+#mapa-svg .pin.on .dot{fill:var(--glow)}
+#mapa-svg .pinlabel{font-family:var(--display);font-weight:800;font-size:13px;fill:var(--ink);paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round;pointer-events:none}
+#mapa-svg .carro{cursor:grab;will-change:transform}
+#mapa-svg .carro.drag{cursor:grabbing}
+#mapa-svg .carro:focus-visible{outline:none}
+.mapinfo{margin:.6rem .3rem 0;padding:.7rem .9rem;background:var(--aqua-soft);border-radius:12px;font-size:.95rem}
+@media (prefers-reduced-motion:reduce){#mapa-svg .carro{transition:none!important}.bar i{transition:none}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+
+/* fotos */
+.ph{display:block;width:100%;max-width:100%;aspect-ratio:16/7;object-fit:cover;border-radius:12px;background:var(--line);margin-bottom:.6rem}
+.card .ph{margin:-.2rem 0 .6rem}
+.daycard .ph{aspect-ratio:16/6;margin-bottom:.8rem}
+.tl{background-size:cover;background-position:center;min-height:120px;display:flex;flex-direction:column;justify-content:flex-end;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.mapinfo img{width:100%;max-width:100%;aspect-ratio:16/6;object-fit:cover;border-radius:10px;margin-top:.5rem}
+.credit{font-size:.72rem;color:var(--muted);margin-top:1rem}
+footer{margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--line);color:var(--muted);font-size:.82rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <svg class="sun" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="14" fill="#ffc531"/><g stroke="#ff6b57" stroke-width="4" stroke-linecap="round"><path d="M32 4v8M32 52v8M4 32h8M52 32h8M12 12l6 6M46 46l6 6M12 52l6-6M46 18l6-6"/></g></svg>
+  <div><h1>Porto Rico em Família</h1><div class="sub">18 de dezembro a 5 de janeiro · 6 adultos + 1 bebê · chegando e saindo por San Juan</div></div>
+</header>
+<nav class="tabs" role="tablist" id="tabs">
+  <button role="tab" data-tab="resumo" aria-selected="true">Resumo</button>
+  <button role="tab" data-tab="dias">Dia a dia</button>
+  <button role="tab" data-tab="mapa">Mapa</button>
+  <button role="tab" data-tab="tarefas">Tarefas <span class="n" id="tcount"></span></button>
+  <button role="tab" data-tab="hospedagem">Hospedagem</button>
+  <button role="tab" data-tab="passeios">Passeios e guias</button>
+  <button role="tab" data-tab="bebe">Bebê e vovó</button>
+</nav>
+
+<!-- ===== RESUMO ===== -->
+<section class="panel" id="p-resumo" role="tabpanel">
+  <div class="grid">
+    <div class="card coral"><div class="eyebrow">Noites</div><div class="big">18</div><p>5 bases, nenhuma a mais de 45 min dos passeios do dia.</p></div>
+    <div class="card lilac"><div class="eyebrow">Soneca</div><div class="big">13h–15h</div><p>Todo dia em casa, quarto escuro. Mudanças de base nesse horário: a bebê dorme no carro.</p></div>
+    <div class="card lime"><div class="eyebrow">Vovó</div><div class="big">≤ 30 min</div><p>de caminhada obrigatória por dia. Escadas e trilhas longas são sempre opcionais.</p></div>
+    <div class="card sun"><div class="eyebrow">Lua</div><div class="big">🌑 7/1</div><p>Lua cheia em 23/12, nova em 7/1. Baías bioluminescentes em 30/12 e 3/1, de barco. <a href="https://www.calendar-12.com/moon_phases/2026">calendário</a></p></div>
+  </div>
+
+  <h2>Quem está na ilha</h2>
+  <div class="gantt">
+    <div class="row"><span>Mamãe e filha</span><div class="track"><div class="bar" style="left:0;width:100%;background:var(--lilac)">18/12 → 05/01</div></div></div>
+    <div class="row"><span>Casal A</span><div class="track"><div class="bar" style="left:0;width:83.3%;background:var(--aqua)">18/12 → 02/01</div></div></div>
+    <div class="row"><span>Casal B + bebê</span><div class="track"><div class="bar" style="left:22.2%;width:77.8%;background:var(--coral)">22/12 → 05/01</div></div></div>
+    <div class="scale"><span></span><div><span>18/12</span><span>22/12</span><span>28/12</span><span>02/01</span><span>05/01</span></div></div>
+  </div>
+
+  <h2>As 5 bases (clique para ver os dias)</h2>
+  <div class="timeline">
+    <button class="tl" style="background-image:linear-gradient(rgba(18,181,176,.25),rgba(18,181,176,.85)),url(img/sanjuan.jpg)" data-go="1812"><b>San Juan</b><span>18 → 24/12 · 6 noites</span><span>Natal na cidade, Velha San Juan</span></button>
+    <button class="tl" style="background-image:linear-gradient(rgba(76,174,63,.25),rgba(76,174,63,.85)),url(img/luquillo.jpg)" data-go="2412"><b>Luquillo</b><span>24 → 28/12 · 4 noites</span><span>El Yunque, Culebra, Nochebuena</span></button>
+    <button class="tl" style="background-image:linear-gradient(rgba(224,168,0,.25),rgba(224,168,0,.85)),url(img/boqueron.jpg)" data-go="2812"><b>Boquerón</b><span>28 → 31/12 · 3 noites</span><span>Cabo Rojo, Parguera, Guánica</span></button>
+    <button class="tl" style="background-image:linear-gradient(rgba(255,95,162,.25),rgba(255,95,162,.85)),url(img/fogos.jpg)" data-go="3112"><b>San Juan</b><span>31/12 → 02/01 · 2 noites</span><span>Réveillon com fogos no Condado</span></button>
+    <button class="tl" style="background-image:linear-gradient(rgba(155,108,240,.25),rgba(155,108,240,.85)),url(img/vieques.jpg)" data-go="0201"><b>Vieques</b><span>02 → 04/01 · 2 noites (+1 em Isla Verde)</span><span>Mosquito Bay, cavalos na praia</span></button>
+  </div>
+
+  <h2>As festas em San Juan</h2>
+  <div class="grid">
+    <div class="card coral"><img class="ph" src="img/morro.jpg" alt="" loading="lazy"><h3>🎄 Luzes de Natal da Velha San Juan</h3><p>Paseo de la Princesa, Calle Fortaleza e a praça da Catedral acesas até Reis. Noites de 19/12 e 23/12 no roteiro.</p><div class="links"><a class="btn sm" href="https://www.discoverpuertorico.com/article/holiday-festivals-events-puerto-rico">Agenda natalina</a><a class="btn sm" href="https://www.discoverpuertorico.com/experience-puerto-ricos-holiday-season">Mi Casa, Mi Navidad</a></div></div>
+    <div class="card sun"><img class="ph" src="img/ciencias.jpg" alt="" loading="lazy"><h3>✨ Parque de las Ciencias</h3><p>Show de luzes com 42 mil LEDs em Bayamón, 25 min de San Juan. Noite de 21/12, antes da bebê chegar.</p><div class="links"><a class="btn sm" href="https://www.plateapr.com/en/things-to-do/holiday-light-displays-and-celebrations-to-enjoy-in-december">Luzes de dezembro</a></div></div>
+    <div class="card lilac"><img class="ph" src="img/santurce.jpg" alt="" loading="lazy"><h3>🎶 La Placita de Santurce</h3><p>Mercado que vira festa de rua à noite, com salsa ao vivo. Noite de 20/12 (sem bebê).</p><div class="links"><a class="btn sm" href="https://www.google.com/maps/search/?api=1&query=La+Placita+de+Santurce">No mapa</a></div></div>
+    <div class="card pink"><img class="ph" src="img/fogos.jpg" alt="" loading="lazy"><h3>🎆 Réveillon no Condado</h3><p>Fogos à meia-noite na Lagoa do Condado e no Centro de Convenções, a pé do apartamento. Jantar cedo, vovó e bebê voltam quando quiserem.</p><div class="links"><a class="btn sm" href="https://www.discoverpuertorico.com/list/things-to-do-puerto-rico-new-years-eve">Réveillon em PR</a></div></div>
+    <div class="card lime"><img class="ph" src="img/luquillo.jpg" alt="" loading="lazy"><h3>🐷 Nochebuena e Natal</h3><p>Ceia de 24/12 em casa, em Luquillo, com lechón encomendado numa lechonera. Dia 25 é praia (Seven Seas), porque parques fecham.</p></div>
+    <div class="card"><img class="ph" src="img/mascaras.jpg" alt="" loading="lazy"><h3>👑 Véspera de Reis</h3><p>Partida em 5/1, véspera do Día de Reyes: as crianças colocam capim debaixo da cama para os camelos. Festa de rua em Hatillo no dia 28/12 no caminho para o oeste.</p></div>
+  </div>
+</section>
+
+<!-- ===== DIAS ===== -->
+<section class="panel" id="p-dias" role="tabpanel" hidden>
+  <p class="small">Toque numa data. Cores da barrinha = base. Selos: <span class="chip e1">leve</span> <span class="chip e2">moderado</span> <span class="chip e3">opcional</span> <span class="chip bio">bio bay</span></p>
+  <div class="datestrip" id="datestrip"></div>
+  <div id="daycard"></div>
+</section>
+
+<!-- ===== MAPA ===== -->
+<section class="panel" id="p-mapa" role="tabpanel" hidden>
+  <p>Arraste o carrinho ou clique num destino. A linha pontilhada é a ordem da viagem.</p>
+  <div class="mapbox">
+  <svg id="mapa-svg" viewBox="0 0 1200 460" role="img" aria-label="Mapa de Porto Rico com os destinos da viagem e um carrinho arrastável">
+    <defs><filter id="sh" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000" flood-opacity=".25"/></filter></defs>
+    <rect x="0" y="0" width="1200" height="460" rx="16" fill="var(--aqua-soft)"/>
+    <g fill="none" stroke="var(--aqua)" stroke-opacity=".35" stroke-width="2.5"><path d="M20 430 q20 -8 40 0 t40 0 t40 0"/><path d="M1060 60 q20 -8 40 0 t40 0"/><path d="M700 420 q20 -8 40 0 t40 0 t40 0"/><path d="M560 30 q20 -8 40 0 t40 0"/></g>
+    <path class="land" d="M100 130 C130 100 230 78 320 72 C440 66 600 66 700 80 C790 92 870 110 935 140 C960 165 945 220 930 260 C918 300 915 330 905 332 C850 356 700 350 560 335 C470 340 390 352 330 372 C280 378 230 370 160 392 C130 398 110 400 100 385 C85 340 83 260 90 200 C92 165 95 150 100 130 Z"/>
+    <path d="M820 160 l18 -32 l10 14 l12 -22 l22 40 z" fill="#4cae3f" opacity=".8"/>
+    <g fill="#4cae3f" opacity=".8"><path d="M500 150 l14 -26 l14 26z"/><path d="M540 160 l12 -22 l12 22z"/></g>
+    <ellipse class="land" cx="1010" cy="300" rx="72" ry="17" transform="rotate(-6 1010 300)"/>
+    <path class="land" d="M1080 165 l20 -12 l22 10 l6 18 l-14 14 l-24 -4 l-10 -14 z"/>
+    <text x="1010" y="335" class="maplabel" text-anchor="middle">Vieques</text>
+    <text x="1098" y="212" class="maplabel" text-anchor="middle">Culebra</text>
+    <text x="520" y="215" class="maplabel big" text-anchor="middle">PORTO RICO</text>
+    <polyline points="710,91 884,143 920,166 1099,177 920,166 316,80 142,337 203,371 429,349 710,91 1012,297" fill="none" stroke="var(--coral)" stroke-width="3" stroke-dasharray="8 8" stroke-linejoin="round" opacity=".7"/>
+    <g id="pins"></g>
+    <g id="carro" class="carro" tabindex="0" role="button" aria-label="Carrinho da família, arraste para um destino">
+      <g transform="translate(-52,-36) scale(.62)" filter="url(#sh)">
+        <rect x="40" y="2" width="90" height="12" rx="4" fill="#8a5a2b"/><rect x="48" y="-6" width="30" height="10" rx="3" fill="#ff6b57"/><rect x="82" y="-6" width="24" height="10" rx="3" fill="#12b5b0"/>
+        <path d="M8 70 L8 48 Q8 40 16 40 L40 40 L58 16 Q62 10 70 10 L128 10 Q136 10 140 16 L158 40 L166 40 Q174 40 174 48 L174 70 Q174 78 166 78 L16 78 Q8 78 8 70 Z" fill="#ffc531" stroke="#1b2340" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M46 40 L60 18 L96 18 L96 40 Z" fill="#d9f6f3" stroke="#1b2340" stroke-width="2.5"/>
+        <path d="M102 18 L130 18 L146 40 L102 40 Z" fill="#d9f6f3" stroke="#1b2340" stroke-width="2.5"/>
+        <g transform="translate(56,30)"><circle r="7" fill="#f1c9a5"/><path d="M-7 -1 q7 -10 14 0" fill="#d9d9d9"/><circle cx="-2.5" r="1"/><circle cx="2.5" r="1"/><path d="M-2.5 3 q2.5 2 5 0" fill="none" stroke="#1b2340" stroke-width="1"/></g>
+        <g transform="translate(72,30)"><circle r="7" fill="#e8b48c"/><path d="M-7 -1 q7 -10 14 0 l0 6 q-7 -4 -14 0z" fill="#3b2314"/><circle cx="-2.5" r="1"/><circle cx="2.5" r="1"/><path d="M-2.5 3 q2.5 2 5 0" fill="none" stroke="#1b2340" stroke-width="1"/></g>
+        <g transform="translate(88,30)"><circle r="7" fill="#c68642"/><path d="M-7 -1 q7 -9 14 0" fill="#111"/><circle cx="-2.5" r="1"/><circle cx="2.5" r="1"/><path d="M-2.5 3 q2.5 2 5 0" fill="none" stroke="#1b2340" stroke-width="1"/></g>
+        <g transform="translate(110,30)"><circle r="7" fill="#f1c9a5"/><path d="M-7 -1 q7 -10 14 0 l0 8 q-7 -5 -14 0z" fill="#b5651d"/><circle cx="-2.5" r="1"/><circle cx="2.5" r="1"/><path d="M-2.5 3 q2.5 2 5 0" fill="none" stroke="#1b2340" stroke-width="1"/></g>
+        <g transform="translate(126,30)"><circle r="7" fill="#e8b48c"/><path d="M-7 -1 q7 -9 14 0" fill="#3b2314"/><circle cx="-2.5" r="1"/><circle cx="2.5" r="1"/><path d="M-2.5 3 q2.5 2 5 0" fill="none" stroke="#1b2340" stroke-width="1"/><rect x="-7" y="5" width="14" height="4" fill="#12b5b0"/></g>
+        <g transform="translate(138,33)"><circle r="7" fill="#c68642"/><path d="M-7 -1 q7 -9 14 0" fill="#111"/><circle cx="-2.5" r="1"/><circle cx="2.5" r="1"/><path d="M-2.5 3 q2.5 2 5 0" fill="none" stroke="#1b2340" stroke-width="1"/></g>
+        <g transform="translate(118,36)"><circle r="5" fill="#f1c9a5" stroke="#fff" stroke-width="1"/><path d="M-3 -5 q3 -3 6 0" fill="none" stroke="#ff5fa2" stroke-width="2"/><circle cx="-1.8" r=".8"/><circle cx="1.8" r=".8"/><path d="M-1.5 2 q1.5 1.5 3 0" fill="none" stroke="#1b2340" stroke-width=".8"/></g>
+        <circle cx="168" cy="56" r="4" fill="#fff6c2" stroke="#1b2340" stroke-width="2"/><circle cx="14" cy="56" r="4" fill="#ff8a7a" stroke="#1b2340" stroke-width="2"/>
+        <circle cx="44" cy="78" r="13" fill="#1b2340"/><circle cx="44" cy="78" r="6" fill="#dfe7ee"/>
+        <circle cx="138" cy="78" r="13" fill="#1b2340"/><circle cx="138" cy="78" r="6" fill="#dfe7ee"/>
+        <circle cx="30" cy="30" r="10" fill="none" stroke="#ff6b57" stroke-width="5" stroke-dasharray="8 6"/>
+      </g>
+    </g>
+  </svg>
+  <div id="mapa-info" class="mapinfo" hidden></div>
+  </div>
+  <p class="small">Em Culebra e Vieques o carrinho vira avião ou ferry, mas ele não sabe disso.</p>
+</section>
+
+<!-- ===== TAREFAS ===== -->
+<section class="panel" id="p-tarefas" role="tabpanel" hidden>
+  <p>Cada tarefa tem um responsável, um prazo e os links para resolver. Marque a caixinha quando terminar: fica salvo para todo mundo que abrir a página.</p>
+  <div class="people" id="people"></div>
+  <div class="tasks" id="tasks"></div>
+  <div class="sync" id="sync"><i></i><span>Conectando…</span></div>
+</section>
+
+<!-- ===== HOSPEDAGEM ===== -->
+<section class="panel" id="p-hospedagem" role="tabpanel" hidden>
+  <p>Casa de 3 quartos resolve melhor a soneca e a ceia; os hotéis até ~US$ 100 são por quarto de casal (3 quartos para o grupo). Nas festas tudo sobe 20 a 40 %, então confira o preço nas datas.</p>
+  <div id="hosp"></div>
+</section>
+
+<!-- ===== PASSEIOS ===== -->
+<section class="panel" id="p-passeios" role="tabpanel" hidden>
+  <p>Preferência por guias locais certificados em grupos pequenos, ou passeios que dispensam guia. Preços por pessoa.</p>
+  <div class="grid" id="tours"></div>
+</section>
+
+<!-- ===== BEBÊ E VOVÓ ===== -->
+<section class="panel" id="p-bebe" role="tabpanel" hidden>
+  <div class="grid">
+    <div class="card lilac"><h3>😴 Soneca escura em qualquer casa</h3><ul><li><a href="https://www.slumberpod.com/">SlumberPod</a> ou cortina blackout com ventosas.</li><li>Ruído branco (app serve) contra coquís, galos e vizinhos.</li><li>Quarto longe da rua e da piscina; pedir foto com a persiana fechada.</li><li>Dias de mudança: soneca no carro, saindo depois do almoço.</li></ul></div>
+    <div class="card"><h3>🏖 Praias para 1 ano e meio</h3><p>Rasas, sem onda, com sombra: Escambrón, La Monserrate (Luquillo), Seven Seas, Flamenco, Boquerón, Playa Santa, Caracas e Sun Bay (Vieques).</p><p>Tenda UV, chapéu, protetor; sol de meio-dia queima em 15 min.</p></div>
+    <div class="card coral"><h3>🚫 Evitar com a bebê</h3><p>Caiaque nas baías (por isso barco), catamarãs de 6 h, Toro Verde, trilha La Mina, desfile das 14h em Hatillo. Cada um tem alternativa no roteiro.</p></div>
+    <div class="card lime"><h3>👵 Para a vovó</h3><ul><li>Passeios das 8h30 às 12h30; tardes de piscina e sombra.</li><li>Barcos com assento e embarque por rampa.</li><li>Escadas sempre opcionais (Yokahú, Gozalandia, muralhas).</li><li>Hospitais de padrão americano em todas as regiões; seguro com cobertura EUA.</li></ul></div>
+    <div class="card sun"><h3>🎒 Itens que resolvem</h3><p>Sling (pedras da Velha San Juan), cadeirinha própria (viaja grátis), repelente (mangue e noites de bio bay), sapatilhas de água, farmácia básica (Walgreens/CVS em todo lugar).</p></div>
+    <div class="card pink"><h3>🌡 Clima</h3><p>Estação seca: 26–29 °C, pancadas curtas em El Yunque. Mar do norte pode ter ondulação; o sul (Boquerón, Guánica, Vieques) fica calmo.</p></div>
+  </div>
+</section>
+
+<footer><div class="credit">Fotos dos lugares: Wikimedia Commons (licenças livres), carregadas direto do site deles. Fotos de hotéis: botão "Fotos" abre a busca de imagens.</div>Montado em 19/10/2026 a partir do documento "Porto Rico com mais natureza". Preços e horários vêm dos sites linkados e mudam; cada link abre a fonte para confirmar. Cavernas de Camuy continuam fechadas e ficaram fora.</footer>
+</div>
+
+<script>
+/* ---------- fotos (Wikimedia Commons) ---------- */
+const IMG={"sanjuan": "img/sanjuan.jpg", "morro": "img/morro.jpg", "condado": "img/condado.jpg", "escambron": "img/escambron.jpg", "bacardi": "img/bacardi.jpg", "santurce": "img/santurce.jpg", "cueva": "img/cueva.jpg", "pinones": "img/pinones.jpg", "luquillo": "img/luquillo.jpg", "sevenseas": "img/sevenseas.jpg", "yunque": "img/yunque.jpg", "flamenco": "img/flamenco.jpg", "culebra": "img/culebra.jpg", "hatillo": "img/hatillo.jpg", "mascaras": "img/mascaras.jpg", "gozalandia": "img/gozalandia.jpg", "boqueron": "img/boqueron.jpg", "faro": "img/faro.jpg", "sucia": "img/sucia.jpg", "salinas": "img/salinas.jpg", "parguera": "img/parguera.jpg", "guanica": "img/guanica.jpg", "ponce": "img/ponce.jpg", "serralles": "img/serralles.jpg", "vieques": "img/vieques.jpg", "mosquito": "img/mosquito.jpg", "esperanza": "img/esperanza.jpg", "sunbay": "img/sunbay.jpg", "caracas": "img/caracas.jpg", "islaverde": "img/islaverde.jpg", "crashboat": "img/crashboat.jpg", "rincon": "img/rincon.jpg", "icacos": "img/icacos.jpg", "marchiquita": "img/marchiquita.jpg", "fogos": "img/fogos.jpg", "ciencias": "img/ciencias.jpg"};
+const PH=(k,alt)=>IMG[k]?`<img class="ph" src="${IMG[k]}" alt="${alt||''}" loading="lazy">`:'';
+
+/* ---------- util ---------- */
+const $=s=>document.querySelector(s);
+const gm=q=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);
+const bk=q=>'https://www.booking.com/searchresults.html?ss='+encodeURIComponent(q);
+const L=(t,u)=>`<a class="btn sm" href="${u}">${t}</a>`;
+
+/* ---------- abas ---------- */
+const TABS=['resumo','dias','mapa','tarefas','hospedagem','passeios','bebe'];
+function showTab(name,push=true){
+  if(!TABS.includes(name))name='resumo';
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===name));
+  TABS.forEach(t=>{$('#p-'+t).hidden=(t!==name);});
+  if(push){try{history.replaceState(null,'','#'+name);}catch(e){}}
+  try{localStorage.setItem('pr-tab',name);}catch(e){}
+  window.scrollTo({top:0});
+}
+$('#tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)showTab(b.dataset.tab);});
+document.querySelectorAll('.tl').forEach(b=>b.addEventListener('click',()=>{showTab('dias');selectDay(b.dataset.go);}));
+
+/* ---------- dias ---------- */
+const DAYS=[
+{id:'1812',img:'condado',w:'sex',d:'18/12',b:1,t:'Chegada e primeiro pé na areia',who:'4 adultos',e:'e1',bl:[
+ ['🛬','Chegada',[`Carro no <a href="${gm('Luis Munoz Marin International Airport')}">SJU</a> → apartamento em Condado/Ocean Park (15 min).`,`Compras no <a href="${gm('Supermax Condado San Juan')}">SuperMax</a>.`]],
+ ['🏖','Tarde',[`<a href="${gm('Ocean Park Beach San Juan')}">Ocean Park Beach</a>, larga e calma.`]],
+ ['🌙','Noite',[`Pizza em grupo no <a href="${gm('Pirilo Pizza Rustica Condado')}">Pirilo</a>.`]]]},
+{id:'1912',img:'morro',w:'sáb',d:'19/12',b:1,t:'Velha San Juan com guia',who:'4 adultos',e:'e2',bl:[
+ ['🏰','Manhã',[`10h30 free tour <a href="https://www.guruwalk.com/san-juan">GuruWalk</a> (1h45, gorjeta).`,`<a href="https://www.nps.gov/saju/index.htm">El Morro</a> (US$ 10): gramado plano, muralhas opcionais.`,`Almoço <a href="${gm('El Jibarito Old San Juan')}">El Jibarito</a> ou <a href="${gm('Barrachina Old San Juan')}">Barrachina</a>.`]],
+ ['🛌','Tarde',['Descanso 14h–17h; a Velha San Juan cansa com o calor.']],
+ ['🎄','Noite',[`Luzes de Natal: <a href="${gm('Paseo de la Princesa San Juan')}">Paseo de la Princesa</a>, Fortaleza, Catedral. Sorvete no <a href="${gm('Senor Paleta Old San Juan')}">Señor Paleta</a>.`]]]},
+{id:'2012',img:'bacardi',w:'dom',d:'20/12',b:1,t:'Casa Bacardí e Escambrón',who:'4 adultos',e:'e1',bl:[
+ ['🥃','Manhã',[`Ferry do Píer 2 a Cataño (12 min, US$ 0,50; <a href="https://puertoricoferry.com/en/routes-schedules/san-juan-catano/">horários</a>) → <a href="https://www.casabacardi.com/puerto-rico">Casa Bacardí</a>: Legacy Tour US$ 40, ou mixologia para os casais.`]],
+ ['🏖','Tarde',[`<a href="${gm('Balneario El Escambron San Juan')}">Escambrón</a>: enseada protegida, a praia da bebê na semana seguinte.`]],
+ ['🎶','Noite',[`<a href="${gm('La Placita de Santurce')}">La Placita de Santurce</a>; jantar no <a href="${gm('Jose Enrique Santurce')}">José Enrique</a> (reservar).`]]]},
+{id:'2112',img:'cueva',w:'seg',d:'21/12',b:1,t:'Cavernas (ou tirolesa) e luzes de Bayamón',who:'4 adultos',e:'e2 e3',bl:[
+ ['🕳','Manhã',[`<b>A (todos):</b> <a href="https://www.discoverpuertorico.com/article/visit-cueva-ventana-breathtaking-window-to-past">Cueva Ventana</a>, Arecibo (1h15). <b>Confirmar se está aberta</b> (<a href="https://www.cuevaventanapr.com/">site</a>). Plano B: <a href="${gm('Playa Mar Chiquita Manati')}">Mar Chiquita</a> + <a href="${gm('Cueva del Indio Arecibo')}">Cueva del Indio</a> (só ágeis).`,`<b>B (casal + filha):</b> <a href="https://toroverdepr.com/">Toro Verde</a>, tirolesa El Monstruo.`,'Camuy continua fechada.']],
+ ['✨','Noite',[`<a href="https://www.plateapr.com/en/things-to-do/holiday-light-displays-and-celebrations-to-enjoy-in-december">Parque de las Ciencias</a>, Bayamón: show de luzes.`]]]},
+{id:'2212',img:'fogos',w:'ter',d:'22/12',b:1,t:'Chegada do casal B e da bebê',who:'6 adultos + bebê',e:'e1',bl:[
+ ['🥐','Manhã',[`Café no <a href="${gm('Kasalta Ocean Park')}">Kasalta</a>. Trocar para a van, se ainda não.`]],
+ ['🛬','Chegada',['Buscar no SJU, cadeirinha, quarto escuro, deixar dormir. Fuso: 1 h a menos que Brasília.']],
+ ['🌙','Noite',['Jantar cedo e perto; comida em casa.']]]},
+{id:'2312',img:'pinones',w:'qua',d:'23/12',b:1,t:'Velha San Juan no sling, Piñones ao pôr do sol',who:'6 adultos + bebê',e:'e1',bl:[
+ ['🏰','Manhã',['8h30–11h30: gramado do El Morro (pipas), Paseo de la Princesa, Puerta de San Juan. Sling, não carrinho.']],
+ ['🛌','Soneca',['12h30–15h em casa.']],
+ ['🌅','Tarde',[`16h <a href="https://www.discoverpuertorico.com/profile/pinones/8120">Piñones</a>: quiosques de alcapurria, passarela no mangue (plana), pôr do sol. Jantar no <a href="${gm('El Boricua Pinones')}">El Boricua</a>.`]]]},
+{id:'2412',img:'luquillo',w:'qui',d:'24/12',b:2,t:'Mudança para Luquillo e Nochebuena em casa',who:'6 adultos + bebê',e:'e1',bl:[
+ ['🚐','Manhã',[`Check-out 10h. Compras no <a href="${gm('Econo Luquillo')}">Econo Luquillo</a> (noite de 24 e dia 25 fecham). Lechón encomendado numa <a href="${gm('lechonera Luquillo')}">lechonera</a>.`,`Almoço nos <a href="https://www.discoverpuertorico.com/profile/luquillo-kiosks/8086">Quiosques de Luquillo</a>: <a href="${gm('La Parrilla Luquillo Kiosks')}">La Parrilla</a>, <a href="${gm('El Jefe Burger Luquillo Kiosks')}">El Jefe Burger</a>.`]],
+ ['🛌','Soneca',['No carro (45 min) e check-in 15h (pedir early check-in).']],
+ ['🏖','Tarde',[`<a href="${gm('Balneario La Monserrate Luquillo')}">La Monserrate</a>: rasa, sem onda, banheiros.`]],
+ ['🐷','Noite',['Nochebuena em casa: lechón, arroz con gandules, tembleque, coquito.']]]},
+{id:'2512',img:'sevenseas',w:'sex',d:'25/12',b:2,t:'Natal: Seven Seas e tarde preguiçosa',who:'6 adultos + bebê',e:'e1',bl:[
+ ['🏖','Manhã',[`<a href="https://www.discoverpuertorico.com/profile/seven-seas-beach/8155">Seven Seas</a>, Fajardo (25 min): enseada rasa, snorkel fácil na ponta esquerda.`]],
+ ['🛌','Soneca',['Almoço em casa, 13h–15h.']],
+ ['🏊','Tarde',[`Piscina. Opcional casais: <a href="https://www.carabalirainforestpark.com/">Carabalí</a> (cavalgada/quadriciclo; confirmar dia 25).`]]]},
+{id:'2612',img:'yunque',w:'sáb',d:'26/12',b:2,t:'El Yunque de carro, cedo',who:'6 adultos + bebê',e:'e2',bl:[
+ ['🌳','Manhã',[`Portão da PR-191 às 8h. Sem reserva desde 2024 (<a href="https://www.fs.usda.gov/r08/elyunque">confirmar</a>).`,`<a href="${gm('El Portal Visitor Center El Yunque')}">El Portal</a> (passarela, US$ 8) → <a href="${gm('La Coca Falls El Yunque')}">La Coca</a> (na estrada) → <a href="${gm('Yokahu Tower El Yunque')}">Yokahú</a> (98 degraus, opcional) → <a href="${gm('Angelito Trail El Yunque')}">Angelito Trail</a> (600 m planos, poço de rio) → <a href="${gm('Juan Diego Falls El Yunque')}">Juan Diego</a> (5 min).`]],
+ ['🛌','Soneca',['Em casa até 13h; almoço nos quiosques no caminho.']],
+ ['🐟','Noite',[`<a href="${gm('Pasta y Pueblo Fajardo')}">Pasta y Pueblo</a> ou <a href="${gm('Boardriders Luquillo')}">Boardriders</a>.`]]]},
+{id:'2712',img:'flamenco',w:'dom',d:'27/12',b:2,t:'Culebra e a praia de Flamenco',who:'6 adultos + bebê',e:'e1',bl:[
+ ['✈️','Como ir',[`<b>Mamãe, bebê, enjoados:</b> voo de 15 min Ceiba→Culebra, <a href="https://www.viequesairlink.com/">Vieques Air Link</a> ou <a href="https://www.airflamenco.net/">Air Flamenco</a>, ~US$ 50–90/trecho.`,`<b>Econômico:</b> <a href="https://puertoricoferry.com/en/buy-tickets/ceiba-culebra/">ferry de Ceiba</a> 8h (US$ 2,25; 60+ US$ 1; bebê grátis). Chegar 1 h antes; esgota semanas antes.`,'Van pública até Flamenco ~US$ 5.']],
+ ['🏝','Praia',[`<a href="https://www.discoverpuertorico.com/profile/flamenco-beach/8068">Flamenco</a>: rasa, quiosques, sombra. Tenda de praia = soneca ali mesmo. Tanques enferrujados na ponta oeste para os casais.`]],
+ ['🔁','Volta',['Voo 15h–16h ou ferry da tarde.',`Alternativa só para casais: <a href="https://www.expedia.com/things-to-do/culebra-day-trip-by-catamaran.a487914.activity-details">catamarã de Fajardo</a> (~US$ 180, 6 h).`]]]},
+{id:'2812',img:'mascaras',w:'seg',d:'28/12',b:3,t:'Máscaras de Hatillo e travessia para o oeste',who:'6 adultos + bebê',e:'e1',bl:[
+ ['🎭','Manhã',[`Sair 7h. 9h em <a href="https://rove.me/es/to/puerto-rico/festival-de-las-mascaras-de-hatillo">Hatillo</a>: comparsas mascaradas pelas ruas de manhã (desfile grande 14h lota). Ver da praça, a distância da bebê.`,`Plano B sem multidão: <a href="https://www.discoverpuertorico.com/profile/gozalandia-waterfalls/9014">Gozalandia</a> (US$ 10; escada; vovó no restaurante).`]],
+ ['🛌','Soneca',[`No carro: Hatillo → Boquerón 1h45. Parada opcional em <a href="https://www.discoverpuertorico.com/profile/crash-boat-beach/8056">Crash Boat</a>.`]],
+ ['🌅','Tarde',[`Check-in 15h. <a href="${gm('Balneario de Boqueron')}">Balneário de Boquerón</a>: 1,5 km rasos e sem onda. Ostras no povoado, a pé.`]]]},
+{id:'2912',img:'sucia',w:'ter',d:'29/12',b:3,t:'Cabo Rojo: farol, Playa Sucia e salinas',who:'6 adultos + bebê',e:'e1',bl:[
+ ['🗼','Manhã',[`8h30 PR-301 (2 km de terra) → <a href="https://www.discoverpuertorico.com/profile/los-morrillos-lighthouse/8092">Faro Los Morrillos</a> (10 min planos) → <a href="https://www.discoverpuertorico.com/profile/playa-sucia/8137">Playa Sucia</a> (+10 min). Sem sombra: levar tudo.`,`<a href="${gm('Centro Interpretativo Las Salinas de Cabo Rojo')}">Salinas</a>: lagoas cor-de-rosa, 15 min.`]],
+ ['🛌','Soneca',[`Almoço em <a href="${gm('El Combate Cabo Rojo')}">El Combate</a>, casa às 13h.`]],
+ ['🌅','Tarde',[`Piscina/Boquerón. Opcional casais: pôr do sol em <a href="https://www.discoverpuertorico.com/regions/west/rincon">Rincón</a> (55 min).`]]]},
+{id:'3012',img:'parguera',w:'qua',d:'30/12',b:3,t:'Guánica de manhã, baía bioluminescente à noite',who:'6 adultos + bebê',e:'e1 bio',bl:[
+ ['🌵','Manhã',[`<a href="https://www.discoverpuertorico.com/profile/guanica-dry-forest/8073">Bosque Seco de Guánica</a>: trilha Ballena (1,5 km plana). Banho em <a href="${gm('Playa Santa Guanica')}">Playa Santa</a> ou barquinho à <a href="https://www.discoverpuertorico.com/profile/gilligans-island/8318">Gilligan's Island</a> (confirmar na semana).`]],
+ ['🛌','Soneca',['Casa 13h; bebê dorme mais cedo hoje.']],
+ ['🌌','Noite',[`18h <a href="https://www.discoverpuertorico.com/regions/south/lajas">La Parguera</a> (35 min): jantar e, 19h30, barco de fundo de vidro na baía bioluminescente (pode nadar). US$ 10–20: <a href="https://jellyfishtourspr.rezdy.com/index">Jellyfish Tours</a>, <a href="${gm("Johnny's Boats La Parguera")}">Johnny's Boats</a>, <a href="${gm('Paradise Scuba La Parguera')}">Paradise Scuba</a>. Lua nasce só depois das 22h.`]]]},
+{id:'3112',img:'ponce',w:'qui',d:'31/12',b:4,t:'Ponce no caminho e Réveillon em San Juan',who:'6 adultos + bebê',e:'e1',bl:[
+ ['🚒','Manhã',[`Check-out 9h → <a href="https://www.discoverpuertorico.com/article/things-to-do-ponce">Ponce</a> (1 h): Plaza Las Delicias, <a href="${gm('Parque de Bombas Ponce')}">Parque de Bombas</a> (grátis), opcional <a href="${gm('Castillo Serralles Ponce')}">Castillo Serrallés</a>. Almoço na praça.`]],
+ ['🛌','Soneca',['PR-52 pela Cordilheira, 1h20. Chegada 15h.']],
+ ['🎆','Noite',[`Jantar cedo (reservar mesa de 7). Meia-noite: fogos na <a href="https://www.discoverpuertorico.com/list/things-to-do-puerto-rico-new-years-eve">Lagoa do Condado</a>, a pé. Vovó e bebê voltam quando quiserem.`]]]},
+{id:'0101',img:'escambron',w:'sex',d:'01/01',b:4,t:'Dia de descanso',who:'6 adultos + bebê',e:'e1',bl:[
+ ['☀️','Dia',[`Manhã lenta, Escambrón ou Ocean Park. Opcional: caiaque na <a href="${gm('Laguna del Condado kayak')}">Laguna do Condado</a> (peixes-boi).`]],
+ ['🥂','Noite',[`Despedida do casal A: <a href="${gm('Santaella Santurce')}">Santaella</a> ou <a href="${gm('Marmalade Old San Juan')}">Marmalade</a> (reservar).`]]]},
+{id:'0201',img:'esperanza',w:'sáb',d:'02/01',b:5,t:'Casal A parte, o resto voa para Vieques',who:'4 adultos + bebê',e:'e1',bl:[
+ ['✈️','Manhã',[`Casal A ao SJU; devolver a van. <a href="https://www.capeair.com/">Cape Air</a> SJU→Vieques (25 min, ~US$ 100–130/trecho). <a href="https://www.viequesairlink.com/">VAL</a> sai do Isla Grande (centro), não do SJU.`]],
+ ['🛌','Soneca',['Check-in em Esperanza (15 min) e soneca. Jipe retirado no aeroporto.']],
+ ['🌅','Tarde',[`<a href="${gm('Malecon de Esperanza Vieques')}">Malecón de Esperanza</a>. Jantar no <a href="${gm('El Quenepo Vieques')}">El Quenepo</a> (reservar) ou <a href="${gm('Bananas Vieques')}">Bananas</a>.`]]]},
+{id:'0301',img:'caracas',w:'dom',d:'03/01',b:5,t:'Praias do refúgio e Mosquito Bay',who:'4 adultos + bebê',e:'e1 bio',bl:[
+ ['🐴','Manhã',[`<a href="https://www.fws.gov/refuge/vieques">Refúgio de Vieques</a> 9h: <a href="${gm('Playa Caracas Red Beach Vieques')}">Playa Caracas</a> (asfalto até a areia, quiosques de sombra, rasa). Cavalos soltos. Casais: <a href="${gm('Playa La Chiva Vieques')}">La Chiva</a>.`]],
+ ['🛌','Soneca',['Casa 13h, soneca longa.']],
+ ['🌌','Noite',[`Mosquito Bay de <b>lancha elétrica</b>: <a href="https://www.biobay.com/">Island Adventures Biobay</a> (busca em Esperanza, 1 h; ~US$ 100 adulto). 4 noites da lua nova: escuro total. Plano B casais: caiaque transparente <a href="https://www.abessnorkeling.com/">Abe's</a>.`]]]},
+{id:'0401',img:'sunbay',w:'seg',d:'04/01',b:5,t:'Sun Bay e volta para perto do aeroporto',who:'4 adultos + bebê',e:'e1',bl:[
+ ['🏖','Manhã',[`<a href="${gm('Sun Bay Vieques')}">Sun Bay</a>: 1,5 km, cavalos na areia, banheiros. Café no malecón.`]],
+ ['✈️','Tarde',['Devolver o jipe; voo Vieques→SJU; hotel em Isla Verde (5 min do aeroporto).','Variante: 3ª noite em Vieques se o voo do dia 5 sair depois das 15h (menos seguro).']],
+ ['🌙','Noite',['Último jantar na praia de Isla Verde. Malas.']]]},
+{id:'0501',img:'islaverde',w:'ter',d:'05/01',b:5,t:'Partida',who:'4 adultos + bebê',e:'',bl:[
+ ['🛫','Dia',['Uber de 5 min ao SJU; 3 h antes em voo internacional. Véspera de Reis: capim debaixo da cama para os camelos.']]]},
+];
+const BASECLS={1:'b1',2:'b2',3:'b3',4:'b4',5:'b5'};
+const ENAME={e1:'leve',e2:'moderado',e3:'opcional',bio:'bio bay'};
+const strip=$('#datestrip');
+DAYS.forEach(d=>{const b=document.createElement('button');b.className=BASECLS[d.b];b.dataset.id=d.id;b.setAttribute('role','tab');b.innerHTML=`<small>${d.w}</small>${d.d}`;b.addEventListener('click',()=>selectDay(d.id));strip.appendChild(b);});
+function selectDay(id){
+  const i=DAYS.findIndex(d=>d.id===id);if(i<0)return;const d=DAYS[i];
+  strip.querySelectorAll('button').forEach(b=>b.setAttribute('aria-selected',b.dataset.id===id));
+  const sel=strip.querySelector(`[data-id="${id}"]`);if(sel)sel.scrollIntoView({inline:'center',block:'nearest'});
+  const chips=`<span class="chip who">${d.who}</span>`+d.e.split(' ').filter(Boolean).map(e=>`<span class="chip ${e}">${ENAME[e]}</span>`).join('');
+  $('#daycard').innerHTML=`<div class="daycard">${PH(d.img,d.t)}<div class="head"><h2>${d.w} ${d.d} · ${d.t}</h2><div class="chips">${chips}</div></div>
+   <div class="blocks">${d.bl.map(([ic,t,items])=>`<div class="blk ${t==='Soneca'?'nap':''}"><div class="ic">${ic}</div><div><div class="t">${t}</div><ul>${items.map(x=>`<li>${x}</li>`).join('')}</ul></div></div>`).join('')}</div>
+   <div class="daynav"><button class="btn" id="dprev" ${i===0?'disabled':''}>← ${i>0?DAYS[i-1].d:''}</button><button class="btn" id="dnext" ${i===DAYS.length-1?'disabled':''}>${i<DAYS.length-1?DAYS[i+1].d:''} →</button></div></div>`;
+  if(i>0)$('#dprev').onclick=()=>selectDay(DAYS[i-1].id);
+  if(i<DAYS.length-1)$('#dnext').onclick=()=>selectDay(DAYS[i+1].id);
+  try{localStorage.setItem('pr-day',id);}catch(e){}
+}
+
+/* ---------- mapa ---------- */
+(function(){
+  const D=[
+    {x:710,y:91,n:'San Juan',img:'morro',d:'18–24/12 e 31/12–02/01',t:'Velha San Juan, Bacardí, Escambrón, Réveillon.',a:'1912'},
+    {x:383,y:126,n:'Arecibo · Cueva Ventana',img:'cueva',d:'21/12',t:'Caverna-janela (confirmar se aberta).',a:'2112'},
+    {x:760,y:84,n:'Piñones',img:'pinones',d:'23/12',t:'Quiosques, mangue e pôr do sol.',a:'2312'},
+    {x:884,y:143,n:'Luquillo',img:'luquillo',d:'24–28/12',t:'Natal em casa, praia, quiosques.',a:'2412'},
+    {x:848,y:183,n:'El Yunque',img:'yunque',d:'26/12',t:'La Coca, Yokahú, Angelito, Juan Diego.',a:'2612'},
+    {x:925,y:160,n:'Fajardo · Seven Seas',img:'sevenseas',d:'25/12',t:'Praia rasa de Natal; Ceiba ao lado.',a:'2512'},
+    {x:1099,y:177,n:'Culebra · Flamenco',img:'flamenco',d:'27/12',t:'Bate-volta de avião ou ferry.',a:'2712'},
+    {x:316,y:80,n:'Hatillo',img:'mascaras',d:'28/12',t:'Festival de las Máscaras.',a:'2812'},
+    {x:142,y:337,n:'Boquerón',img:'boqueron',d:'28–31/12',t:'Base do Sudoeste, praia rasa, ostras.',a:'2812'},
+    {x:132,y:394,n:'Cabo Rojo · Playa Sucia',img:'sucia',d:'29/12',t:'Farol, falésias, salinas rosa.',a:'2912'},
+    {x:203,y:371,n:'La Parguera',img:'parguera',d:'30/12 noite',t:'Baía bioluminescente de barco.',a:'3012'},
+    {x:275,y:371,n:'Guánica',img:'guanica',d:'30/12',t:'Bosque Seco, Playa Santa.',a:'3012'},
+    {x:429,y:349,n:'Ponce',img:'ponce',d:'31/12',t:'Parque de Bombas, Serrallés.',a:'3112'},
+    {x:1012,y:297,n:'Vieques · Esperanza',img:'esperanza',d:'02–04/01',t:'Mosquito Bay, Caracas, Sun Bay.',a:'0301'},
+  ];
+  const svg=$('#mapa-svg'),pins=$('#pins'),car=$('#carro'),info=$('#mapa-info'),NS='http://www.w3.org/2000/svg';
+  D.forEach(p=>{const g=document.createElementNS(NS,'g');g.setAttribute('class','pin');g.setAttribute('transform',`translate(${p.x},${p.y})`);g.setAttribute('tabindex','0');g.setAttribute('role','button');g.setAttribute('aria-label',p.n);
+    g.innerHTML=`<circle r="16" class="halo"/><circle r="8" class="dot"/><text y="-18" text-anchor="middle" class="pinlabel">${p.n}</text>`;
+    g.addEventListener('click',()=>go(p));g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go(p);}});pins.appendChild(g);});
+  let cur={x:710,y:91};
+  function setCar(x,y,anim){car.style.transition=anim?'transform .9s cubic-bezier(.4,.1,.2,1)':'none';car.style.transform=`translate(${x}px,${y}px)`;cur={x,y};}
+  setCar(710,91,false);
+  function go(p){setCar(p.x,p.y,true);document.querySelectorAll('.pin').forEach(el=>el.classList.toggle('on',el.getAttribute('aria-label')===p.n));
+    info.hidden=false;info.innerHTML=`<b>${p.n}</b> <span class="small">${p.d}</span> · ${p.t} <button class="btn sm solid" data-day="${p.a}">Ver o dia</button>${IMG[p.img]?`<img src="${IMG[p.img]}" alt="${p.n}" loading="lazy">`:''}`;
+    info.querySelector('button').onclick=()=>{showTab('dias');selectDay(p.a);};}
+  let drag=null;
+  function pt(e){const m=svg.getScreenCTM().inverse();const q=svg.createSVGPoint();q.x=e.clientX;q.y=e.clientY;return q.matrixTransform(m);}
+  car.addEventListener('pointerdown',e=>{e.preventDefault();car.setPointerCapture(e.pointerId);const p=pt(e);drag={dx:p.x-cur.x,dy:p.y-cur.y};car.classList.add('drag');});
+  car.addEventListener('pointermove',e=>{if(!drag)return;const p=pt(e);setCar(Math.max(20,Math.min(1180,p.x-drag.dx)),Math.max(20,Math.min(440,p.y-drag.dy)),false);});
+  function drop(){if(!drag)return;drag=null;car.classList.remove('drag');let best=null,bd=1e9;D.forEach(p=>{const d=Math.hypot(p.x-cur.x,p.y-cur.y);if(d<bd){bd=d;best=p;}});if(best&&bd<70)go(best);}
+  car.addEventListener('pointerup',drop);car.addEventListener('pointercancel',drop);
+  car.addEventListener('keydown',e=>{const i=D.findIndex(p=>p.x===cur.x&&p.y===cur.y);if(e.key==='ArrowRight')go(D[(i+1)%D.length]);if(e.key==='ArrowLeft')go(D[(i-1+D.length)%D.length]);});
+})();
+
+/* ---------- tarefas ---------- */
+const PEOPLE={laura:'Laura',amanda:'Amanda',mamae:'Mamãe',victor:'Victor'};
+const INI={laura:'L',amanda:'A',mamae:'M',victor:'V'};
+const AB=(ci,co,ss,ad=6)=>`https://www.airbnb.com/s/${encodeURIComponent(ss)}/homes?checkin=${ci}&checkout=${co}&adults=${ad}&infants=1&min_bedrooms=3`;
+const BKA=(ss,ci,co)=>`https://www.booking.com/searchresults.html?ss=${encodeURIComponent(ss)}&checkin=${ci}&checkout=${co}&group_adults=2&no_rooms=1&order=review_score_and_price&nflt=price%3DUSD-min-100-1`;
+const TASKS=[
+ {id:'t01',o:'laura',due:'2026-10-31',t:'Apartamento em San Juan 18→24/12 (3 quartos, Ocean Park ou Condado)',d:'Cozinha, quarto que escurece, a pé da praia. Pedir berço e early check-in.',l:[['Airbnb (datas prontas)',AB('2026-12-18','2026-12-24','Ocean-Park--San-Juan--Puerto-Rico')],['3BR varanda','https://www.airbnb.com/rooms/795668043775582733'],['Topacio pátio','https://www.airbnb.com/rooms/16259680'],['3BR c/ vaga','https://www.airbnb.com/rooms/23915935'],['Hotéis ≤100 Booking',BKA('Ocean Park, San Juan, Puerto Rico','2026-12-18','2026-12-24')]]},
+ {id:'t02',o:'laura',due:'2026-10-31',t:'Casa em Luquillo / Río Grande 24→28/12 (Natal)',d:'3 quartos + piscina, condomínio fechado entre a praia e a PR-191.',l:[['Airbnb Luquillo',AB('2026-12-24','2026-12-28','Luquillo--Puerto-Rico')],['Vrbo Luquillo','https://www.vrbo.com/search?destination=Luquillo%2C%20Puerto%20Rico&startDate=2026-12-24&endDate=2026-12-28&adults=6'],['Palm Beach Villa 3BR','https://www.vrbo.com/2974929'],['Hotéis ≤100 Booking',BKA('Luquillo, Puerto Rico','2026-12-24','2026-12-28')]]},
+ {id:'t03',o:'laura',due:'2026-10-31',t:'Casa em Boquerón (Cabo Rojo) 28→31/12',d:'3 quartos com piscina, a pé do povoado. Alternativa: Copamarina em Guánica.',l:[['Airbnb Boquerón',AB('2026-12-28','2026-12-31','Boqueron--Cabo-Rojo--Puerto-Rico')],['Villa MiCasaSuCasa','https://www.vrbo.com/2266309'],['3BR a pé do povoado','https://www.airbnb.com/rooms/5909524'],['Copamarina','https://www.copamarina.com/'],['Hotéis ≤100 Booking',BKA('Boqueron, Cabo Rojo, Puerto Rico','2026-12-28','2026-12-31')]]},
+ {id:'t04',o:'laura',due:'2026-10-31',t:'Apartamento em San Juan 31/12→02/01 (Réveillon)',d:'Mesmo prédio ou o mesmo apartamento de dezembro, se o anfitrião topar. Perto da Lagoa do Condado para ver os fogos a pé.',l:[['Airbnb Condado',AB('2026-12-31','2027-01-02','Condado--San-Juan--Puerto-Rico')],['Hotéis ≤100 Booking',BKA('Condado, San Juan, Puerto Rico','2026-12-31','2027-01-02')]]},
+ {id:'t05',o:'laura',due:'2026-10-31',t:'Van de 8 lugares (ou SUV + compacto) 18/12→02/01 no SJU',d:'6 adultos + cadeirinha + malas. Devolução no SJU em 02/01. AutoExpreso incluso.',l:[['Discover Cars','https://www.discovercars.com/puerto-rico/san-juan/sju'],['Charlie Car Rental','https://www.charliecars.com/'],['Kayak SJU','https://www.kayak.com/San-Juan-Luis-Munoz-Marin-Intl-Airport-Car-Rentals.SJU.cap.ksp']]},
+ {id:'t06',o:'laura',due:'2026-11-15',t:'Hotel em Isla Verde 04→05/01 (última noite, 2 quartos)',d:'A 5 min do aeroporto; pedir berço.',l:[['Courtyard Isla Verde','https://www.marriott.com/en-us/hotels/sjuir-courtyard-isla-verde-beach-resort/overview/'],['Verdanza','https://www.verdanzahotel.com/'],['Hotéis ≤100 Booking',BKA('Isla Verde, Carolina, Puerto Rico','2027-01-04','2027-01-05')]]},
+ {id:'t07',o:'laura',due:'2026-11-30',t:'Seguro-viagem com cobertura nos EUA para todos',d:'Porto Rico é território americano: hospital é caro sem seguro. Incluir a bebê e a mamãe.',l:[['Comparar seguros','https://www.google.com/search?q=seguro+viagem+estados+unidos+comparar']]},
+ {id:'t08',o:'laura',due:'2026-12-10',t:'Confirmar berço, blackout e early check-in com cada anfitrião',d:'Mensagem para os 5 anfitriões/hotéis. Pedir foto do quarto da bebê com a persiana fechada.',l:[['SlumberPod (plano B)','https://www.slumberpod.com/']]},
+ {id:'t09',o:'amanda',due:'2026-10-31',t:'Voos Cape Air SJU→Vieques 02/01 e Vieques→SJU 04/01',d:'4 adultos + bebê de colo. Limite de bagagem por peso: malas leves.',l:[['Cape Air','https://www.capeair.com/'],['Vieques Air Link (sai do Isla Grande)','https://www.viequesairlink.com/'],['Skyscanner SJU–VQS','https://www.skyscanner.com/routes/sjua/vqs/san-juan-to-vieques.html']]},
+ {id:'t10',o:'amanda',due:'2026-10-31',t:'Lancha elétrica em Mosquito Bay, 03/01',d:'Island Adventures Biobay, busca em Esperanza. Esgota na semana do Ano-Novo. Confirmar se levam bebê de colo.',l:[['biobay.com','https://www.biobay.com/'],['Mesma lancha no Expedia','https://www.expedia.com/things-to-do/1-hour-bioluminescent-boat-tour-in-mosquito-bay.a5276078.activity-details'],['Plano B: Abe\'s (caiaque)','https://www.abessnorkeling.com/']]},
+ {id:'t11',o:'amanda',due:'2026-10-31',t:'Hospedagem em Vieques 02→04/01 (Esperanza)',d:'4 adultos + bebê: casa de 2 quartos ou 2 quartos de hotel com cozinha.',l:[['Airbnb Esperanza',AB('2027-01-02','2027-01-04','Esperanza--Vieques--Puerto-Rico',4).replace('min_bedrooms=3','min_bedrooms=2')],['Malecón House',gm('Malecon House Vieques')],['Sea Gate Hotel',gm('Sea Gate Hotel Vieques')],['Hotéis ≤120 Booking',BKA('Esperanza, Vieques, Puerto Rico','2027-01-02','2027-01-04').replace('min-100','min-120')]]},
+ {id:'t12',o:'amanda',due:'2026-11-15',t:'Culebra 27/12: voo Ceiba↔Culebra ou ferry',d:'Voo para mamãe + bebê (VAL/Air Flamenco); ferry das 8h para o resto, comprar assim que abrir a venda.',l:[['Vieques Air Link','https://www.viequesairlink.com/'],['Air Flamenco','https://www.airflamenco.net/'],['Ferry Ceiba–Culebra','https://puertoricoferry.com/en/buy-tickets/ceiba-culebra/']]},
+ {id:'t13',o:'amanda',due:'2026-11-15',t:'Jipe em Vieques 02→04/01, retirada no aeroporto',d:'Jipes esgotam em janeiro; Maritza\'s só funciona 8h–18h.',l:[['Maritza\'s',gm("Maritza's Car Rental Vieques")],['Vieques Car Rental',gm('Vieques Car Rental')],['Avis Vieques','https://www.avis.com/en/locations/lat/pr/vieques']]},
+ {id:'t14',o:'amanda',due:'2026-12-10',t:'Kit da bebê: cadeirinha, SlumberPod/blackout, ruído branco, tenda de praia UV',d:'Cadeirinha própria viaja grátis na maioria das companhias.',l:[['SlumberPod','https://www.slumberpod.com/']]},
+ {id:'t15',o:'victor',due:'2026-11-15',t:'Barco na baía bioluminescente de La Parguera, 30/12 às 19h30',d:'Barco de fundo de vidro, US$ 10–20/pessoa. Confirmar que aceitam bebê e que há assento.',l:[['Jellyfish Tours','https://jellyfishtourspr.rezdy.com/index'],['Johnny\'s Boats',gm("Johnny's Boats La Parguera")],['Paradise Scuba',gm('Paradise Scuba La Parguera')]]},
+ {id:'t16',o:'victor',due:'2026-11-30',t:'Plano El Yunque 26/12 + guia opcional para os casais',d:'Confirmar que segue sem reserva; horário dos portões; mapa das paradas. Tours To Do PR (US$ 59–75) para quem quiser o tobogã.',l:[['Página oficial El Yunque','https://www.fs.usda.gov/r08/elyunque'],['Tours To Do PR','https://www.expedia.com/things-to-do/small-group-el-yunque-rainforest-tour-with-transport.a45031557.activity-details'],['Angelito Trail',gm('Angelito Trail El Yunque')]]},
+ {id:'t17',o:'victor',due:'2026-11-30',t:'Casa Bacardí 20/12 (tour + ferry de Cataño)',d:'Legacy Tour US$ 40 ou mixologia. Ferry do Píer 2, US$ 0,50.',l:[['Casa Bacardí','https://www.casabacardi.com/puerto-rico'],['Ferry San Juan–Cataño','https://puertoricoferry.com/en/routes-schedules/san-juan-catano/']]},
+ {id:'t18',o:'victor',due:'2026-11-30',t:'Confirmar se a Cueva Ventana está aberta (21/12) e fechar o plano B',d:'Um site a lista como fechada temporariamente. Plano B: Mar Chiquita + Cueva del Indio, ou Toro Verde para os jovens.',l:[['Cueva Ventana','https://www.cuevaventanapr.com/'],['Toro Verde','https://toroverdepr.com/'],['Discover PR: Cueva Ventana','https://www.discoverpuertorico.com/article/visit-cueva-ventana-breathtaking-window-to-past']]},
+ {id:'t19',o:'victor',due:'2026-11-30',t:'Opcionais dos casais: catamarã Icacos e Carabalí (25–26/12)',d:'Só se sobrar vontade; nada disso é para a bebê ou a vovó.',l:[['Icacos catamarã','https://activities.marriott.com/north-america/puerto-rico/puerto-rico/luquillo/activities/icacos_island_catamaran_day_sail_from_fajardo-XU2IIW'],['Carabalí','https://www.carabalirainforestpark.com/'],['Las Cabezas (trólei, bom p/ vovó)','https://www.paralanaturaleza.org/']]},
+ {id:'t20',o:'victor',due:'2026-12-10',t:'Confirmar barco da Gilligan\'s Island (30/12) ou trocar por Playa Santa',d:'O barquinho abre e fecha com frequência.',l:[['Gilligan\'s Island','https://www.discoverpuertorico.com/profile/gilligans-island/8318'],['Playa Santa',gm('Playa Santa Guanica')]]},
+ {id:'t21',o:'victor',due:'2026-12-15',t:'Horários das comparsas de Hatillo 28/12 e rota de estacionamento',d:'Ver no município nos dias anteriores; chegar 9h, sair 11h30.',l:[['Município de Hatillo','https://www.facebook.com/MunicipiodeHatillo/'],['Sobre o festival','https://rove.me/es/to/puerto-rico/festival-de-las-mascaras-de-hatillo']]},
+ {id:'t22',o:'mamae',due:'2026-11-15',t:'Jantar de Réveillon 31/12 em San Juan (mesa de 7, cedo)',d:'Perto do Condado para ver os fogos a pé. Ou cardápio de Réveillon em casa.',l:[['Réveillon em PR','https://www.discoverpuertorico.com/list/things-to-do-puerto-rico-new-years-eve'],['Restaurantes Condado',gm('restaurantes Condado San Juan')]]},
+ {id:'t23',o:'mamae',due:'2026-11-30',t:'Jantar de despedida do casal A, 01/01',d:'Santaella ou Marmalade; reservar com antecedência.',l:[['Santaella',gm('Santaella Santurce')],['Marmalade',gm('Marmalade Old San Juan')]]},
+ {id:'t24',o:'mamae',due:'2026-11-30',t:'Restaurantes de Vieques e Luquillo (reservar El Quenepo 02/01)',d:'El Quenepo lota; Bananas é o plano B. Em Luquillo: Boardriders, Pasta y Pueblo.',l:[['El Quenepo',gm('El Quenepo Vieques')],['Bananas',gm('Bananas Vieques')],['Pasta y Pueblo',gm('Pasta y Pueblo Fajardo')]]},
+ {id:'t25',o:'mamae',due:'2026-12-05',t:'Agenda das festas de Natal em San Juan (19–23/12)',d:'Luzes da Velha San Juan, Parque de las Ciencias, eventos no Paseo de la Princesa. Anotar horários no grupo.',l:[['Agenda natalina','https://www.discoverpuertorico.com/article/holiday-festivals-events-puerto-rico'],['Luzes de dezembro','https://www.plateapr.com/en/things-to-do/holiday-light-displays-and-celebrations-to-enjoy-in-december'],['Mi Casa, Mi Navidad','https://www.discoverpuertorico.com/experience-puerto-ricos-holiday-season']]},
+ {id:'t26',o:'mamae',due:'2026-12-10',t:'Encomendar lechón e pasteles da Nochebuena em Luquillo',d:'Ligar para uma lechonera e combinar retirada em 24/12 de manhã. Lista de compras da ceia.',l:[['Lechoneras Luquillo',gm('lechonera Luquillo')],['Econo Luquillo',gm('Econo Luquillo')]]},
+];
+let state={};            // id -> {done, owner}
+let filter='todos';
+let db=null, canWrite=true;
+const peopleEl=$('#people'),tasksEl=$('#tasks'),syncEl=$('#sync');
+function owner(t){return (state[t.id]&&state[t.id].owner)||t.o;}
+function isDone(t){return !!(state[t.id]&&state[t.id].done);}
+function fmt(d){const [y,m,dd]=d.split('-');return `${dd}/${m}`;}
+function dueCls(d){const diff=(new Date(d+'T23:59')-Date.now())/864e5;return diff<0?'late':diff<10?'soon':'';}
+function renderPeople(){
+  const keys=['todos',...Object.keys(PEOPLE)];
+  peopleEl.innerHTML=keys.map(k=>{
+    const list=k==='todos'?TASKS:TASKS.filter(t=>owner(t)===k);const done=list.filter(isDone).length;
+    return `<button class="person" data-p="${k}" aria-pressed="${filter===k}"><span class="nm"><span class="av ${k}">${k==='todos'?'★':INI[k]}</span>${k==='todos'?'Todas':PEOPLE[k]}<span class="small" style="margin-left:auto">${done}/${list.length}</span></span><div class="bar"><i style="width:${list.length?done/list.length*100:0}%"></i></div></button>`;}).join('');
+  peopleEl.querySelectorAll('.person').forEach(b=>b.onclick=()=>{filter=b.dataset.p;renderPeople();renderTasks();});
+  const open=TASKS.filter(t=>!isDone(t)).length;$('#tcount').textContent=open;
+}
+function renderTasks(){
+  const list=TASKS.filter(t=>filter==='todos'||owner(t)===filter).sort((a,b)=>isDone(a)-isDone(b)||a.due.localeCompare(b.due));
+  tasksEl.innerHTML=list.map(t=>{const o=owner(t),dn=isDone(t);
+    return `<div class="task ${o} ${dn?'done':''}">
+      <input type="checkbox" id="c-${t.id}" ${dn?'checked':''} ${canWrite?'':'disabled'} aria-label="Concluída: ${t.t}">
+      <div><label class="ttl" for="c-${t.id}">${t.t}</label>
+        <div class="meta"><span class="av ${o}" title="${PEOPLE[o]}">${INI[o]}</span><select id="o-${t.id}" ${canWrite?'':'disabled'} aria-label="Responsável">${Object.keys(PEOPLE).map(k=>`<option value="${k}" ${k===o?'selected':''}>${PEOPLE[k]}</option>`).join('')}</select><span class="due ${dueCls(t.due)}">até ${fmt(t.due)}</span></div>
+        <p class="desc">${t.d}</p>
+        <div class="links">${t.l.map(([n,u])=>L(n,u)).join('')}</div></div></div>`;}).join('');
+  list.forEach(t=>{
+    $('#c-'+t.id).onchange=e=>save(t.id,{done:e.target.checked,owner:owner(t)});
+    $('#o-'+t.id).onchange=e=>save(t.id,{done:isDone(t),owner:e.target.value});
+  });
+}
+function setSync(cls,msg){syncEl.className='sync '+cls;syncEl.querySelector('span').textContent=msg;}
+async function save(id,val){
+  state[id]=val;renderPeople();renderTasks();
+  if(db&&canWrite){try{await db.collection('tasks').doc(id).set({...val,at:new Date().toISOString()});setSync('on','Salvo para todo mundo.');}
+    catch(e){if(e&&e.code==='invalid_argument'){canWrite=false;setSync('off','Você só pode ver: peça à Laura acesso de Contributor para marcar tarefas.');renderTasks();}else setSync('off','Não consegui salvar agora; tente de novo.');}}
+  else{try{localStorage.setItem('pr-tasks',JSON.stringify(state));}catch(e){}}
+}
+(function initTasks(){
+  try{const s=localStorage.getItem('pr-tasks');if(s)state=JSON.parse(s)||{};}catch(e){}
+  renderPeople();renderTasks();
+  const useDb=window.claude&&window.claude.use?window.claude.use('db'):Promise.resolve(null);
+  useDb.then(d=>{
+    if(!d){setSync('off','Marcações ficam só neste aparelho (abra pelo link do claude.ai para compartilhar).');return;}
+    db=d;setSync('on','Conectado: marcações compartilhadas.');
+    db.collection('tasks').onSnapshot(snap=>{const st={};snap.docs.forEach(x=>{if(x.exists)st[x.id]=x.data();});state=st;renderPeople();renderTasks();},
+      err=>{setSync('off','Perdi a conexão com as marcações compartilhadas.');});
+  }).catch(()=>setSync('off','Marcações ficam só neste aparelho.'));
+})();
+
+/* ---------- hospedagem ---------- */
+const HOSP=[
+ {img:'condado',t:'San Juan · 18→24/12 e 31/12→02/01',c:'coral',casas:[['Airbnb Ocean Park 18–24',AB('2026-12-18','2026-12-24','Ocean-Park--San-Juan--Puerto-Rico')],['Airbnb Condado 31/12–02/01',AB('2026-12-31','2027-01-02','Condado--San-Juan--Puerto-Rico')],['3BR varanda','https://www.airbnb.com/rooms/795668043775582733'],['Topacio pátio','https://www.airbnb.com/rooms/16259680'],['3BR c/ vaga','https://www.airbnb.com/rooms/23915935'],['Caribe Hilton','https://www.hilton.com/en/hotels/sjuchhh-caribe-hilton/']],
+  bk:BKA('Ocean Park, San Juan, Puerto Rico','2026-12-18','2026-12-24'),hot:[['Dreamcatcher by DW','Ocean Park','~US$ 90','redes, café vegetariano, 1 quadra da praia'],['Dream Inn','Ocean Park','~US$ 90','mesma rua, mais simples'],['Casa Isabel B&B','Ocean Park','ver','nota 9,8, poucos quartos'],['Hotel Milano','Velha San Juan','US$ 100–150','na Fortaleza, no meio das luzes'],['CasaBlanca Hotel','Velha San Juan','~US$ 103','boutique, nota 8,8'],['Metro Art Hotel','Santurce','~US$ 100','nota 9,0, perto da Placita']]},
+ {img:'luquillo',t:'Leste · 24→28/12',c:'lime',casas:[['Airbnb Luquillo',AB('2026-12-24','2026-12-28','Luquillo--Puerto-Rico')],['Vrbo Luquillo','https://www.vrbo.com/search?destination=Luquillo%2C%20Puerto%20Rico&startDate=2026-12-24&endDate=2026-12-28&adults=6'],['Palm Beach Villa 3BR','https://www.vrbo.com/2974929'],['Hyatt Grand Reserve','https://www.hyatt.com/hyatt-regency/en-US/sjurg-hyatt-regency-grand-reserve-puerto-rico'],['Wyndham Rio Mar','https://www.wyndhamhotels.com/wyndham-grand/rio-grande-puerto-rico/wyndham-grand-rio-mar-puerto-rico-golf-and-beach-resort/overview']],
+  bk:BKA('Luquillo, Puerto Rico','2026-12-24','2026-12-28'),hot:[['Luquillo Sunrise Beach Inn','Luquillo','US$ 85–140','nota 9,2, de frente para a praia'],['Casa Coral','Luquillo','~US$ 100','guesthouse nota 9,6'],['Yunque Mar Beach Hotel','Luquillo','US$ 90–110','pé na areia, piscina pequena'],['Fajardo Inn','Fajardo','US$ 100–130','duas piscinas, área infantil'],['Rainforest Inn','El Yunque','US$ 120+','B&B na floresta, para casais']]},
+ {img:'boqueron',t:'Sudoeste · 28→31/12',c:'sun',casas:[['Airbnb Boquerón',AB('2026-12-28','2026-12-31','Boqueron--Cabo-Rojo--Puerto-Rico')],['Villa MiCasaSuCasa','https://www.vrbo.com/2266309'],['3BR a pé do povoado','https://www.airbnb.com/rooms/5909524'],['Puerto Salinas condomínio','https://www.airbnb.com/rooms/29682248'],['Copamarina (Guánica)','https://www.copamarina.com/']],
+  bk:BKA('Boqueron, Cabo Rojo, Puerto Rico','2026-12-28','2026-12-31'),hot:[['Parador Boquemar','Boquerón','US$ 100–135','no povoado, piscina'],['Combate Beach Resort','El Combate','US$ 110–130','pé na areia, 15 min de Playa Sucia'],['Parador Guánica 1929','Guánica','~US$ 102','casarão histórico, piscina'],['Parador Villa Parguera','La Parguera','US$ 90–110','no cais da bio bay'],['Cofresí Beach Hotel','Boquerón','~US$ 100','apartamentos com cozinha']]},
+ {img:'esperanza',t:'Vieques · 02→04/01',c:'lilac',casas:[['Airbnb Esperanza',AB('2027-01-02','2027-01-04','Esperanza--Vieques--Puerto-Rico',4).replace('min_bedrooms=3','min_bedrooms=2')],['Guia de bairros','https://islaguru.com/articles/where-to-stay-vieques'],['Malecón House',gm('Malecon House Vieques')],['La Casona Blanca',gm('La Casona Blanca Esperanza Vieques')]],
+  bk:BKA('Esperanza, Vieques, Puerto Rico','2027-01-02','2027-01-04').replace('min-100','min-120'),hot:[['Waterside Inn','Esperanza','~US$ 92','de frente para o malecón'],['Casa de Tortuga','Esperanza','~US$ 104','limpo, bem localizado'],['Casa de Amistad','Isabel II','~US$ 100','piscina, café, bicicletas'],['Sea Gate Hotel','Isabel II','~US$ 116','nota 9,4, piscina infantil'],['Villa Coral','Esperanza','~US$ 120','cozinha e berço']]},
+ {img:'islaverde',t:'Isla Verde · 04→05/01',c:'pink',casas:[['Courtyard Isla Verde','https://www.marriott.com/en-us/hotels/sjuir-courtyard-isla-verde-beach-resort/overview/'],['Verdanza','https://www.verdanzahotel.com/'],['Embassy Suites','https://www.hilton.com/en/hotels/sjuprhh-embassy-suites-san-juan-hotel-and-casino/']],
+  bk:BKA('Isla Verde, Carolina, Puerto Rico','2027-01-04','2027-01-05'),hot:[['La Playita','Isla Verde','~US$ 80','1 quadra da praia, 5 min do aeroporto'],['Hotel Villa del Sol','Isla Verde','US$ 100–111','casa colonial com piscina'],['Borinquen Beach Inn','Isla Verde','~US$ 105','pousada, estacionamento grátis'],['Coqui del Mar','Isla Verde','~US$ 100','cozinha e piscina']]},
+];
+$('#hosp').innerHTML=HOSP.map(h=>`<div class="card ${h.c}" style="margin-bottom:1rem">${PH(h.img,h.t)}<h3>${h.t}</h3>
+  <div class="eyebrow">Casas e resorts</div><div class="links">${h.casas.map(([n,u])=>L(n,u)).join('')}</div>
+  <div class="eyebrow" style="margin-top:.9rem">Hotéis até ~US$ 100 por quarto · <a href="${h.bk}">lista do Booking com datas e filtro</a></div>
+  ${h.hot.map(([n,w,p,d])=>`<div class="hrow"><div><b>${n}</b> <span class="w">${w} · ${d}</span></div><div><span class="pr">${p}</span> <a class="btn sm" href="${bk(n+' '+w+' Puerto Rico')}">Booking</a> <a class="btn sm coral" href="https://www.google.com/search?tbm=isch&q=${encodeURIComponent(n+' '+w+' Puerto Rico hotel')}">Fotos</a></div></div>`).join('')}
+</div>`).join('');
+
+/* ---------- passeios ---------- */
+const TOURS=[
+ ['morro','coral','San Juan','GuruWalk · free tour da Velha San Juan','gorjeta ~US$ 10–20','1h45, saídas 10h30 e 12h30, Plaza Colón. Nota 4,7.',[['Reservar','https://www.guruwalk.com/san-juan']]],
+ ['bacardi','coral','San Juan','Casa Bacardí · Legacy Tour','US$ 40','Tour curto com degustação; ferry de 50 centavos. Mixologia para os casais.',[['Reservar','https://www.casabacardi.com/puerto-rico']]],
+ ['yunque','lime','El Yunque','Sozinhos de carro','US$ 8 (El Portal)','Melhor para o grupo todo: paradas curtas, soneca garantida.',[['Página oficial','https://www.fs.usda.gov/r08/elyunque']]],
+ ['yunque','lime','El Yunque','Tours To Do PR · grupo pequeno','US$ 59–75','Guia certificado, 1 para 7, tobogã natural. Para os casais.',[['Ver no Expedia','https://www.expedia.com/things-to-do/small-group-el-yunque-rainforest-tour-with-transport.a45031557.activity-details']]],
+ ['sevenseas','lime','Fajardo','Las Cabezas de San Juan · trólei','~US$ 12','Reserva natural com farol, quase sem caminhada. Ótima para a vovó se chover em El Yunque.',[['Reservar','https://www.paralanaturaleza.org/']]],
+ ['flamenco','lime','Culebra','Ferry público + van','US$ 2,25 + ~US$ 5','O passeio mais barato da viagem; bilhetes esgotam cedo.',[['Bilhetes','https://puertoricoferry.com/en/buy-tickets/ceiba-culebra/']]],
+ ['icacos','lime','Culebra / Icacos','Catamarã com snorkel e almoço','US$ 100–185','Icacos meio dia, Culebra dia inteiro. Só casais.',[['Culebra','https://www.expedia.com/things-to-do/culebra-day-trip-by-catamaran.a487914.activity-details'],['Icacos','https://activities.marriott.com/north-america/puerto-rico/puerto-rico/luquillo/activities/icacos_island_catamaran_day_sail_from_fajardo-XU2IIW']]],
+ ['parguera','sun','La Parguera','Barco na baía bioluminescente','US$ 10–20','Fundo de vidro, pode nadar; combos com snorkel ~US$ 60.',[['Jellyfish Tours','https://jellyfishtourspr.rezdy.com/index'],['Paradise Scuba',gm('Paradise Scuba La Parguera')]]],
+ ['vieques','lilac','Vieques','Island Adventures · lancha elétrica','~US$ 100','Única alternativa ao caiaque em Mosquito Bay. 1 h, busca em Esperanza.',[['biobay.com','https://www.biobay.com/'],['No Expedia','https://www.expedia.com/things-to-do/1-hour-bioluminescent-boat-tour-in-mosquito-bay.a5276078.activity-details']]],
+ ['rincon','pink','Qualquer dia','Motorista-guia privado para 6','US$ 400–600/dia','Para um dia sem dirigir (Hatillo, Cabo Rojo). Dividido por 6 sai como tour em grupo.',[['Viator PR','https://www.viator.com/Puerto-Rico/d36-ttd'],['Airbnb Experiences','https://www.airbnb.com/s/experiences?query=Puerto%20Rico']]],
+];
+$('#tours').innerHTML=TOURS.map(([im,c,w,n,p,d,ls])=>`<div class="card ${c}">${PH(im,n)}<span class="chip">${w}</span><h3 style="margin-top:.4rem">${n}</h3><div class="big" style="font-size:1.2rem;color:var(--coral)">${p}</div><p>${d}</p><div class="links">${ls.map(([a,b])=>L(a,b)).join('')}</div></div>`).join('');
+
+/* ---------- boot ---------- */
+(function(){
+  let tab='resumo';
+  const h=(location.hash||'').replace('#','');
+  if(TABS.includes(h))tab=h;else{try{const s=localStorage.getItem('pr-tab');if(TABS.includes(s))tab=s;}catch(e){}}
+  showTab(tab,false);
+  let day='1812';try{const s=localStorage.getItem('pr-day');if(DAYS.some(d=>d.id===s))day=s;}catch(e){}
+  selectDay(day);
+})();
+</script>
+</body>
+</html>
