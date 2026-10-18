@@ -158,6 +158,15 @@ section.panel{padding-top:1.2rem}
 #mapa-svg .carro{cursor:grab;will-change:transform}
 #mapa-svg .carro.drag{cursor:grabbing}
 #mapa-svg .carro:focus-visible{outline:none}
+.stepper{display:grid;grid-template-columns:auto 1fr auto;gap:.6rem;align-items:center;margin:.2rem .2rem .7rem}
+.stbtn{width:48px;height:48px;border:0;border-radius:50%;background:var(--coral);color:#fff;font-size:1.2rem;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.2)}
+.stbtn:disabled{opacity:.35;cursor:default}
+.stbtn:hover:not(:disabled){background:var(--pink)}
+.steppanel{background:var(--sun-soft);border-radius:14px;padding:.55rem .9rem;min-width:0}
+.steppanel .eyebrow{color:var(--coral)}
+.steppanel b{font-family:var(--display);font-size:1.25rem;display:block;line-height:1.1}
+.steppanel .ev{font-size:.92rem}
+.steppanel .nights{font-family:var(--display);font-weight:800;color:var(--aqua)}
 .legend{display:flex;flex-wrap:wrap;gap:.5rem 1.1rem;font-size:.8rem;color:var(--muted);padding:.5rem .4rem 0;font-weight:700}
 .legend .lg{display:inline-block;width:26px;height:0;border-top:4px solid var(--coral);vertical-align:middle;margin-right:.35rem}
 .legend .lg.dash{border-top-style:dashed;border-top-width:3px;border-color:var(--sun)}
@@ -262,6 +271,7 @@ footer{margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--line);color
 <section class="panel" id="p-mapa" role="tabpanel" hidden>
   <p>As setas numeradas são o percurso de carro, na ordem da viagem: linha cheia é mudança de base, tracejada é bate-volta, pontilhada é avião ou ferry. Clique num número, num trecho da lista ou num destino; o carrinho vai até lá e a programação aparece.</p>
   <div class="mapbox">
+  <div class="stepper"><button class="stbtn" id="stPrev" aria-label="Parada anterior">◀</button><div class="steppanel" id="stPanel"></div><button class="stbtn" id="stNext" aria-label="Próxima parada">▶</button></div>
   <svg id="mapa-svg" viewBox="0 0 1200 460" role="img" aria-label="Mapa de Porto Rico com os destinos da viagem e um carrinho arrastável">
     <defs><filter id="sh" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000" flood-opacity=".25"/></filter></defs>
     <rect x="0" y="0" width="1200" height="460" rx="16" fill="var(--aqua-soft)"/>
@@ -507,6 +517,47 @@ function selectDay(id){
     b.innerHTML=`<span class="n">${l.n}</span><span><span class="w">${l.date} · ${l.mode==='move'?'mudança de base':l.mode==='trip'?'bate-volta':'avião / ferry'}</span><b>${l.from} → ${l.to}</b></span><span class="tm">${l.time}</span>`;
     b.addEventListener('click',()=>selLeg(l));legsEl.appendChild(b);
   });
+  /* paradas, em ordem, com o caminho desenhado a partir da parada anterior */
+  const STOPS=[
+    {city:'San Juan',when:'18 → 24/12',n:'6 noites',ev:'Velha San Juan iluminada de Natal, Bacardí, Escambrón',pin:'San Juan',pt:[710,91],d:null},
+    {city:'Arecibo · Cueva Ventana',when:'21/12 · bate-volta',n:'1 dia',ev:'Caverna-janela sobre o vale (ou Toro Verde para os jovens)',pin:'Arecibo · Cueva Ventana',pt:[383,126],d:'M710 91 C620 70 480 70 383 126'},
+    {city:'Luquillo',when:'24 → 28/12',n:'4 noites',ev:'Nochebuena em casa, praia La Monserrate e quiosques',pin:'Luquillo',pt:[884,143],d:'M383 126 C480 70 620 70 710 91 C780 90 840 110 884 143'},
+    {city:'El Yunque',when:'26/12 · bate-volta',n:'1 manhã',ev:'Floresta tropical: La Coca, Yokahú, Angelito Trail',pin:'El Yunque',pt:[848,183],d:'M884 143 C870 160 860 170 848 183'},
+    {city:'Culebra · Flamenco',when:'27/12 · bate-volta',n:'1 dia',ev:'Praia de Flamenco, de avião (15 min) ou ferry',pin:'Culebra · Flamenco',pt:[1099,177],d:'M848 183 C860 170 870 160 884 143 L920 166 C980 140 1040 150 1099 177'},
+    {city:'Hatillo',when:'28/12 · parada no caminho',n:'1 manhã',ev:'Festival de las Máscaras (comparsas da manhã)',pin:'Hatillo',pt:[316,80],d:'M1099 177 C1040 150 980 140 920 166 L884 143 C800 90 600 60 316 80'},
+    {city:'Boquerón',when:'28 → 31/12',n:'3 noites',ev:'Praia rasa e sem onda, ostras no povoado',pin:'Boquerón',pt:[142,337],d:'M316 80 C200 90 110 120 95 200 C90 260 95 320 142 337'},
+    {city:'Cabo Rojo · Playa Sucia',when:'29/12 · bate-volta',n:'1 manhã',ev:'Farol Los Morrillos, falésias e salinas cor-de-rosa',pin:'Cabo Rojo · Playa Sucia',pt:[132,394],d:'M142 337 C128 355 125 375 132 394'},
+    {city:'Guánica e La Parguera',when:'30/12 · bate-volta',n:'1 dia + noite',ev:'Bosque Seco de manhã, baía bioluminescente de barco à noite',pin:'La Parguera',pt:[203,371],d:'M132 394 C125 375 128 355 142 337 C170 360 190 380 203 371'},
+    {city:'Ponce',when:'31/12 · parada no caminho',n:'1 manhã',ev:'Plaza Las Delicias e Parque de Bombas',pin:'Ponce',pt:[429,349],d:'M203 371 C230 380 255 380 275 371 C330 372 380 360 429 349'},
+    {city:'San Juan',when:'31/12 → 02/01',n:'2 noites',ev:'Réveillon com fogos na Lagoa do Condado; despedida do casal A',pin:'San Juan',pt:[710,91],d:'M429 349 C520 250 620 150 710 91'},
+    {city:'Vieques · Esperanza',when:'02 → 04/01',n:'2 noites',ev:'Mosquito Bay de lancha elétrica, praias com cavalos',pin:'Vieques · Esperanza',pt:[1012,297],d:'M710 91 C820 150 920 250 1012 297'},
+    {city:'Isla Verde (aeroporto)',when:'04 → 05/01',n:'1 noite',ev:'Último jantar na praia e voo de volta no dia 5',pin:'San Juan',pt:[745,80],d:'M1012 297 C930 230 820 130 745 80'},
+  ];
+  let step=0,anim=null;
+  const panel=$('#stPanel'),btnPrev=$('#stPrev'),btnNext=$('#stNext');
+  function renderStep(){const st=STOPS[step];
+    panel.innerHTML=`<div class="eyebrow">Parada ${step+1} de ${STOPS.length} · ${st.when}</div><b>${st.city}</b><div class="ev"><span class="nights">${st.n}</span> · ${st.ev} <button class="btn sm" id="stOpen">ver programação</button></div>`;
+    $('#stOpen').onclick=()=>{const pp=D.find(x=>x.n===st.pin);if(pp)go(pp);};
+    btnPrev.disabled=step===0;btnNext.disabled=step===STOPS.length-1;
+    document.querySelectorAll('.pin').forEach(el=>el.classList.toggle('on',el.getAttribute('aria-label')===st.pin));}
+  function drive(d,reverse,done){
+    if(anim)cancelAnimationFrame(anim);
+    if(!d){done();return;}
+    const tmp=document.createElementNS(NS,'path');tmp.setAttribute('d',d);const L=tmp.getTotalLength();
+    const dur=Math.max(700,Math.min(2600,L*2.2));const t0=performance.now();
+    car.style.transition='none';
+    function frame(now){const k=Math.min(1,(now-t0)/dur);const e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;const len=L*(reverse?1-e:e);
+      const q=tmp.getPointAtLength(len);const q2=tmp.getPointAtLength(Math.max(0,Math.min(L,len+(reverse?-4:4))));
+      car.style.transform=`translate(${q.x}px,${q.y}px)${q2.x<q.x?' scaleX(-1)':''}`;cur={x:q.x,y:q.y};
+      if(k<1)anim=requestAnimationFrame(frame);else{anim=null;done();}}
+    anim=requestAnimationFrame(frame);}
+  function goStep(next){
+    rota.classList.remove('sel');rota.querySelectorAll('.on').forEach(el=>el.classList.remove('on'));legsEl.querySelectorAll('.leg').forEach(b=>b.setAttribute('aria-pressed','false'));
+    if(next>step){const st=STOPS[next];step=next;renderStep();drive(st.d,false,()=>{car.style.transform=`translate(${st.pt[0]}px,${st.pt[1]}px)`;cur={x:st.pt[0],y:st.pt[1]};});}
+    else{const from=STOPS[step];step=next;renderStep();drive(from.d,true,()=>{const st=STOPS[step];car.style.transform=`translate(${st.pt[0]}px,${st.pt[1]}px)`;cur={x:st.pt[0],y:st.pt[1]};});}}
+  btnPrev.onclick=()=>{if(step>0)goStep(step-1);};
+  btnNext.onclick=()=>{if(step<STOPS.length-1)goStep(step+1);};
+  renderStep();
   function selLeg(l){
     rota.classList.add('sel');
     rota.querySelectorAll('path,.badge').forEach(el=>el.classList.toggle('on',el.dataset.n==l.n));
@@ -536,7 +587,7 @@ function selectDay(id){
   car.addEventListener('pointermove',e=>{if(!drag)return;const p=pt(e);setCar(Math.max(20,Math.min(1180,p.x-drag.dx)),Math.max(20,Math.min(440,p.y-drag.dy)),false);});
   function drop(){if(!drag)return;drag=null;car.classList.remove('drag');let best=null,bd=1e9;D.forEach(p=>{const d=Math.hypot(p.x-cur.x,p.y-cur.y);if(d<bd){bd=d;best=p;}});if(best&&bd<70)go(best);}
   car.addEventListener('pointerup',drop);car.addEventListener('pointercancel',drop);
-  car.addEventListener('keydown',e=>{const i=Math.max(0,D.findIndex(p=>p.x===cur.x&&p.y===cur.y));if(e.key==='ArrowRight')go(D[(i+1)%D.length]);if(e.key==='ArrowLeft')go(D[(i-1+D.length)%D.length]);});
+  car.addEventListener('keydown',e=>{if(e.key==='ArrowRight'){e.preventDefault();btnNext.click();}if(e.key==='ArrowLeft'){e.preventDefault();btnPrev.click();}});
 })();
 
 /* ---------- tarefas ---------- */
