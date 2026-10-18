@@ -159,6 +159,8 @@ section.panel{padding-top:1.2rem}
 #mapa-svg .carro.drag{cursor:grabbing}
 #mapa-svg .carro:focus-visible{outline:none}
 .mapinfo{margin:.6rem .3rem 0;padding:.7rem .9rem;background:var(--aqua-soft);border-radius:12px;font-size:.95rem}
+.mapinfo .daycard{margin-top:.7rem;box-shadow:none}
+.mapinfo .links{margin:.4rem 0}
 @media (prefers-reduced-motion:reduce){#mapa-svg .carro{transition:none!important}.bar i{transition:none}}
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 
@@ -167,7 +169,7 @@ section.panel{padding-top:1.2rem}
 .card .ph{margin:-.2rem 0 .6rem}
 .daycard .ph{aspect-ratio:16/6;margin-bottom:.8rem}
 .tl{background-size:cover;background-position:center;min-height:120px;display:flex;flex-direction:column;justify-content:flex-end;text-shadow:0 1px 3px rgba(0,0,0,.6)}
-.mapinfo img{width:100%;max-width:100%;aspect-ratio:16/6;object-fit:cover;border-radius:10px;margin-top:.5rem}
+
 .credit{font-size:.72rem;color:var(--muted);margin-top:1rem}
 footer{margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--line);color:var(--muted);font-size:.82rem}
 </style>
@@ -414,14 +416,17 @@ const BASECLS={1:'b1',2:'b2',3:'b3',4:'b4',5:'b5'};
 const ENAME={e1:'leve',e2:'moderado',e3:'opcional',bio:'bio bay'};
 const strip=$('#datestrip');
 DAYS.forEach(d=>{const b=document.createElement('button');b.className=BASECLS[d.b];b.dataset.id=d.id;b.setAttribute('role','tab');b.innerHTML=`<small>${d.w}</small>${d.d}`;b.addEventListener('click',()=>selectDay(d.id));strip.appendChild(b);});
+function dayHTML(d,i,withNav){
+  const chips=`<span class="chip who">${d.who}</span>`+d.e.split(' ').filter(Boolean).map(e=>`<span class="chip ${e}">${ENAME[e]}</span>`).join('');
+  const nav=withNav?`<div class="daynav"><button class="btn" id="dprev" ${i===0?'disabled':''}>← ${i>0?DAYS[i-1].d:''}</button><button class="btn" id="dnext" ${i===DAYS.length-1?'disabled':''}>${i<DAYS.length-1?DAYS[i+1].d:''} →</button></div>`:'';
+  return `<div class="daycard">${PH(d.img,d.t)}<div class="head"><h2>${d.w} ${d.d} · ${d.t}</h2><div class="chips">${chips}</div></div>
+   <div class="blocks">${d.bl.map(([ic,t,items])=>`<div class="blk ${t==='Soneca'?'nap':''}"><div class="ic">${ic}</div><div><div class="t">${t}</div><ul>${items.map(x=>`<li>${x}</li>`).join('')}</ul></div></div>`).join('')}</div>${nav}</div>`;
+}
 function selectDay(id){
   const i=DAYS.findIndex(d=>d.id===id);if(i<0)return;const d=DAYS[i];
   strip.querySelectorAll('button').forEach(b=>b.setAttribute('aria-selected',b.dataset.id===id));
   const sel=strip.querySelector(`[data-id="${id}"]`);if(sel)sel.scrollIntoView({inline:'center',block:'nearest'});
-  const chips=`<span class="chip who">${d.who}</span>`+d.e.split(' ').filter(Boolean).map(e=>`<span class="chip ${e}">${ENAME[e]}</span>`).join('');
-  $('#daycard').innerHTML=`<div class="daycard">${PH(d.img,d.t)}<div class="head"><h2>${d.w} ${d.d} · ${d.t}</h2><div class="chips">${chips}</div></div>
-   <div class="blocks">${d.bl.map(([ic,t,items])=>`<div class="blk ${t==='Soneca'?'nap':''}"><div class="ic">${ic}</div><div><div class="t">${t}</div><ul>${items.map(x=>`<li>${x}</li>`).join('')}</ul></div></div>`).join('')}</div>
-   <div class="daynav"><button class="btn" id="dprev" ${i===0?'disabled':''}>← ${i>0?DAYS[i-1].d:''}</button><button class="btn" id="dnext" ${i===DAYS.length-1?'disabled':''}>${i<DAYS.length-1?DAYS[i+1].d:''} →</button></div></div>`;
+  $('#daycard').innerHTML=dayHTML(d,i,true);
   if(i>0)$('#dprev').onclick=()=>selectDay(DAYS[i-1].id);
   if(i<DAYS.length-1)$('#dnext').onclick=()=>selectDay(DAYS[i+1].id);
   try{localStorage.setItem('pr-day',id);}catch(e){}
@@ -430,20 +435,20 @@ function selectDay(id){
 /* ---------- mapa ---------- */
 (function(){
   const D=[
-    {x:710,y:91,n:'San Juan',img:'morro',d:'18–24/12 e 31/12–02/01',t:'Velha San Juan, Bacardí, Escambrón, Réveillon.',a:'1912'},
-    {x:383,y:126,n:'Arecibo · Cueva Ventana',img:'cueva',d:'21/12',t:'Caverna-janela (confirmar se aberta).',a:'2112'},
-    {x:760,y:84,n:'Piñones',img:'pinones',d:'23/12',t:'Quiosques, mangue e pôr do sol.',a:'2312'},
-    {x:884,y:143,n:'Luquillo',img:'luquillo',d:'24–28/12',t:'Natal em casa, praia, quiosques.',a:'2412'},
-    {x:848,y:183,n:'El Yunque',img:'yunque',d:'26/12',t:'La Coca, Yokahú, Angelito, Juan Diego.',a:'2612'},
-    {x:925,y:160,n:'Fajardo · Seven Seas',img:'sevenseas',d:'25/12',t:'Praia rasa de Natal; Ceiba ao lado.',a:'2512'},
-    {x:1099,y:177,n:'Culebra · Flamenco',img:'flamenco',d:'27/12',t:'Bate-volta de avião ou ferry.',a:'2712'},
-    {x:316,y:80,n:'Hatillo',img:'mascaras',d:'28/12',t:'Festival de las Máscaras.',a:'2812'},
-    {x:142,y:337,n:'Boquerón',img:'boqueron',d:'28–31/12',t:'Base do Sudoeste, praia rasa, ostras.',a:'2812'},
-    {x:132,y:394,n:'Cabo Rojo · Playa Sucia',img:'sucia',d:'29/12',t:'Farol, falésias, salinas rosa.',a:'2912'},
-    {x:203,y:371,n:'La Parguera',img:'parguera',d:'30/12 noite',t:'Baía bioluminescente de barco.',a:'3012'},
-    {x:275,y:371,n:'Guánica',img:'guanica',d:'30/12',t:'Bosque Seco, Playa Santa.',a:'3012'},
-    {x:429,y:349,n:'Ponce',img:'ponce',d:'31/12',t:'Parque de Bombas, Serrallés.',a:'3112'},
-    {x:1012,y:297,n:'Vieques · Esperanza',img:'esperanza',d:'02–04/01',t:'Mosquito Bay, Caracas, Sun Bay.',a:'0301'},
+    {x:710,y:91,n:'San Juan',img:'morro',d:'18–24/12 e 31/12–02/01',t:'Velha San Juan, Bacardí, Escambrón, Réveillon.',days:['1812','1912','2012','2212','2312','3112','0101']},
+    {x:383,y:126,n:'Arecibo · Cueva Ventana',img:'cueva',d:'21/12',t:'Caverna-janela (confirmar se aberta).',days:['2112']},
+    {x:760,y:84,n:'Piñones',img:'pinones',d:'23/12',t:'Quiosques, mangue e pôr do sol.',days:['2312']},
+    {x:884,y:143,n:'Luquillo',img:'luquillo',d:'24–28/12',t:'Natal em casa, praia, quiosques.',days:['2412','2512','2612']},
+    {x:848,y:183,n:'El Yunque',img:'yunque',d:'26/12',t:'La Coca, Yokahú, Angelito, Juan Diego.',days:['2612']},
+    {x:925,y:160,n:'Fajardo · Seven Seas',img:'sevenseas',d:'25/12',t:'Praia rasa de Natal; Ceiba ao lado.',days:['2512','2712']},
+    {x:1099,y:177,n:'Culebra · Flamenco',img:'flamenco',d:'27/12',t:'Bate-volta de avião ou ferry.',days:['2712']},
+    {x:316,y:80,n:'Hatillo',img:'mascaras',d:'28/12',t:'Festival de las Máscaras.',days:['2812']},
+    {x:142,y:337,n:'Boquerón',img:'boqueron',d:'28–31/12',t:'Base do Sudoeste, praia rasa, ostras.',days:['2812','2912','3012']},
+    {x:132,y:394,n:'Cabo Rojo · Playa Sucia',img:'sucia',d:'29/12',t:'Farol, falésias, salinas rosa.',days:['2912']},
+    {x:203,y:371,n:'La Parguera',img:'parguera',d:'30/12 noite',t:'Baía bioluminescente de barco.',days:['3012']},
+    {x:275,y:371,n:'Guánica',img:'guanica',d:'30/12',t:'Bosque Seco, Playa Santa.',days:['3012']},
+    {x:429,y:349,n:'Ponce',img:'ponce',d:'31/12',t:'Parque de Bombas, Serrallés.',days:['3112']},
+    {x:1012,y:297,n:'Vieques · Esperanza',img:'esperanza',d:'02–04/01',t:'Mosquito Bay, Caracas, Sun Bay.',days:['0201','0301','0401']},
   ];
   const svg=$('#mapa-svg'),pins=$('#pins'),car=$('#carro'),info=$('#mapa-info'),NS='http://www.w3.org/2000/svg';
   D.forEach(p=>{const g=document.createElementNS(NS,'g');g.setAttribute('class','pin');g.setAttribute('transform',`translate(${p.x},${p.y})`);g.setAttribute('tabindex','0');g.setAttribute('role','button');g.setAttribute('aria-label',p.n);
@@ -452,16 +457,20 @@ function selectDay(id){
   let cur={x:710,y:91};
   function setCar(x,y,anim){car.style.transition=anim?'transform .9s cubic-bezier(.4,.1,.2,1)':'none';car.style.transform=`translate(${x}px,${y}px)`;cur={x,y};}
   setCar(710,91,false);
-  function go(p){setCar(p.x,p.y,true);document.querySelectorAll('.pin').forEach(el=>el.classList.toggle('on',el.getAttribute('aria-label')===p.n));
-    info.hidden=false;info.innerHTML=`<b>${p.n}</b> <span class="small">${p.d}</span> · ${p.t} <button class="btn sm solid" data-day="${p.a}">Ver o dia</button>${IMG[p.img]?`<img src="${IMG[p.img]}" alt="${p.n}" loading="lazy">`:''}`;
-    info.querySelector('button').onclick=()=>{showTab('dias');selectDay(p.a);};}
+  function go(p,dayId){setCar(p.x,p.y,true);document.querySelectorAll('.pin').forEach(el=>el.classList.toggle('on',el.getAttribute('aria-label')===p.n));
+    const id=dayId||p.days[0];const i=DAYS.findIndex(d=>d.id===id);const d=DAYS[i];
+    const pills=p.days.map(x=>{const dd=DAYS.find(q=>q.id===x);return `<button class="btn sm ${x===id?'solid':''}" data-d="${x}">${dd.w} ${dd.d}</button>`;}).join('');
+    info.hidden=false;info.innerHTML=`<div class="mapinfo-head"><b>${p.n}</b> <span class="small">${p.d}</span> · ${p.t}</div><div class="links">${pills}<button class="btn sm coral" id="mapOpen">Abrir na aba Dia a dia</button></div>${dayHTML(d,i,false)}`;
+    info.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>go(p,b.dataset.d));
+    $('#mapOpen').onclick=()=>{showTab('dias');selectDay(id);};
+    info.scrollIntoView({behavior:'smooth',block:'nearest'});}
   let drag=null;
   function pt(e){const m=svg.getScreenCTM().inverse();const q=svg.createSVGPoint();q.x=e.clientX;q.y=e.clientY;return q.matrixTransform(m);}
   car.addEventListener('pointerdown',e=>{e.preventDefault();car.setPointerCapture(e.pointerId);const p=pt(e);drag={dx:p.x-cur.x,dy:p.y-cur.y};car.classList.add('drag');});
   car.addEventListener('pointermove',e=>{if(!drag)return;const p=pt(e);setCar(Math.max(20,Math.min(1180,p.x-drag.dx)),Math.max(20,Math.min(440,p.y-drag.dy)),false);});
   function drop(){if(!drag)return;drag=null;car.classList.remove('drag');let best=null,bd=1e9;D.forEach(p=>{const d=Math.hypot(p.x-cur.x,p.y-cur.y);if(d<bd){bd=d;best=p;}});if(best&&bd<70)go(best);}
   car.addEventListener('pointerup',drop);car.addEventListener('pointercancel',drop);
-  car.addEventListener('keydown',e=>{const i=D.findIndex(p=>p.x===cur.x&&p.y===cur.y);if(e.key==='ArrowRight')go(D[(i+1)%D.length]);if(e.key==='ArrowLeft')go(D[(i-1+D.length)%D.length]);});
+  car.addEventListener('keydown',e=>{const i=Math.max(0,D.findIndex(p=>p.x===cur.x&&p.y===cur.y));if(e.key==='ArrowRight')go(D[(i+1)%D.length]);if(e.key==='ArrowLeft')go(D[(i-1+D.length)%D.length]);});
 })();
 
 /* ---------- tarefas ---------- */
