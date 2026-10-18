@@ -160,6 +160,7 @@ section.panel{padding-top:1.2rem}
 #mapa-svg .carro:focus-visible{outline:none}
 .mapinfo{margin:.6rem .3rem 0;padding:.7rem .9rem;background:var(--aqua-soft);border-radius:12px;font-size:.95rem}
 .mapinfo .daycard{margin-top:.7rem;box-shadow:none}
+.mapinfo .daycard .ph{aspect-ratio:16/5}
 .mapinfo .links{margin:.4rem 0}
 @media (prefers-reduced-motion:reduce){#mapa-svg .carro{transition:none!important}.bar i{transition:none}}
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
@@ -457,12 +458,13 @@ function selectDay(id){
   let cur={x:710,y:91};
   function setCar(x,y,anim){car.style.transition=anim?'transform .9s cubic-bezier(.4,.1,.2,1)':'none';car.style.transform=`translate(${x}px,${y}px)`;cur={x,y};}
   setCar(710,91,false);
-  function go(p,dayId){setCar(p.x,p.y,true);document.querySelectorAll('.pin').forEach(el=>el.classList.toggle('on',el.getAttribute('aria-label')===p.n));
-    const id=dayId||p.days[0];const i=DAYS.findIndex(d=>d.id===id);const d=DAYS[i];
-    const pills=p.days.map(x=>{const dd=DAYS.find(q=>q.id===x);return `<button class="btn sm ${x===id?'solid':''}" data-d="${x}">${dd.w} ${dd.d}</button>`;}).join('');
-    info.hidden=false;info.innerHTML=`<div class="mapinfo-head"><b>${p.n}</b> <span class="small">${p.d}</span> · ${p.t}</div><div class="links">${pills}<button class="btn sm coral" id="mapOpen">Abrir na aba Dia a dia</button></div>${dayHTML(d,i,false)}`;
-    info.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>go(p,b.dataset.d));
-    $('#mapOpen').onclick=()=>{showTab('dias');selectDay(id);};
+  function go(p){setCar(p.x,p.y,true);document.querySelectorAll('.pin').forEach(el=>el.classList.toggle('on',el.getAttribute('aria-label')===p.n));
+    const list=p.days.map(x=>[DAYS.findIndex(q=>q.id===x),DAYS.find(q=>q.id===x)]);
+    const jump=list.length>1?`<div class="links">${list.map(([i,d])=>`<button class="btn sm" data-j="${d.id}">${d.w} ${d.d}</button>`).join('')}</div>`:'';
+    const cards=list.map(([i,d])=>`<div id="m-${d.id}">${dayHTML(d,i,false)}<div class="links" style="margin:-.2rem 0 .8rem"><button class="btn sm coral" data-open="${d.id}">Abrir ${d.d} na aba Dia a dia</button></div></div>`).join('');
+    info.hidden=false;info.innerHTML=`<div class="mapinfo-head"><b>${p.n}</b> <span class="small">${p.d}</span> · ${p.t}${list.length>1?` · <b>${list.length} dias</b>`:''}</div>${jump}${cards}`;
+    info.querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>{const el=document.getElementById('m-'+b.dataset.j);el&&el.scrollIntoView({behavior:'smooth',block:'start'});});
+    info.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>{showTab('dias');selectDay(b.dataset.open);});
     info.scrollIntoView({behavior:'smooth',block:'nearest'});}
   let drag=null;
   function pt(e){const m=svg.getScreenCTM().inverse();const q=svg.createSVGPoint();q.x=e.clientX;q.y=e.clientY;return q.matrixTransform(m);}
