@@ -167,6 +167,17 @@ section.panel{padding-top:1.2rem}
 .steppanel b{font-family:var(--display);font-size:1.25rem;display:block;line-height:1.1}
 .steppanel .ev{font-size:.92rem}
 .steppanel .nights{font-family:var(--display);font-weight:800;color:var(--aqua)}
+.trip{display:grid;grid-template-columns:auto 1fr auto;gap:.5rem;align-items:center;margin-top:.55rem;background:var(--surface);border-radius:12px;padding:.5rem .7rem}
+.tbox{min-width:0;text-align:center}
+.tbox b{font-size:1.35rem;line-height:1;font-variant-numeric:tabular-nums;color:var(--coral)}
+.tbox span{display:block;font-size:.72rem;font-weight:700;color:var(--muted);line-height:1.15;margin-top:.15rem}
+.tline{position:relative;height:30px;min-width:60px}
+.tline::before{content:"";position:absolute;left:0;right:12px;top:50%;border-top:3px dashed var(--aqua)}
+.tline::after{content:"";position:absolute;right:0;top:50%;transform:translateY(-50%);border-left:12px solid var(--aqua);border-top:7px solid transparent;border-bottom:7px solid transparent}
+.tline .dur{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--aqua-soft);color:var(--ink);border-radius:999px;padding:.1rem .55rem;font-family:var(--display);font-weight:800;font-size:.78rem;white-space:nowrap}
+.back{font-size:.8rem;color:var(--muted);margin-top:.35rem;font-weight:700}
+.back b{display:inline;font-size:.85rem;color:var(--coral)}
+@media (max-width:480px){.trip{grid-template-columns:auto 1fr auto;gap:.3rem;padding:.45rem .5rem}.tbox b{font-size:1.1rem}.tline{min-width:40px}.tline .dur{font-size:.68rem;padding:.05rem .4rem}}
 .legend{display:flex;flex-wrap:wrap;gap:.5rem 1.1rem;font-size:.8rem;color:var(--muted);padding:.5rem .4rem 0;font-weight:700}
 .legend .lg{display:inline-block;width:26px;height:0;border-top:4px solid var(--coral);vertical-align:middle;margin-right:.35rem}
 .legend .lg.dash{border-top-style:dashed;border-top-width:3px;border-color:var(--sun)}
@@ -269,7 +280,7 @@ footer{margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--line);color
 
 <!-- ===== MAPA ===== -->
 <section class="panel" id="p-mapa" role="tabpanel" hidden>
-  <p>As setas numeradas são o percurso de carro, na ordem da viagem: linha cheia é mudança de base, tracejada é bate-volta, pontilhada é avião ou ferry. Clique num número, num trecho da lista ou num destino; o carrinho vai até lá e a programação aparece.</p>
+  <p>As setas numeradas são o percurso de carro, na ordem da viagem: linha cheia é mudança de base, tracejada é bate-volta. Culebra e Vieques são de ferry a partir de Ceiba: a van fica no estacionamento do terminal. Clique num número, num trecho da lista ou num destino; o carrinho vai até lá e a programação aparece.</p>
   <div class="mapbox">
   <div class="stepper"><button class="stbtn" id="stPrev" aria-label="Parada anterior">◀</button><div class="steppanel" id="stPanel"></div><button class="stbtn" id="stNext" aria-label="Próxima parada">▶</button></div>
   <svg id="mapa-svg" viewBox="0 0 1200 460" role="img" aria-label="Mapa de Porto Rico com os destinos da viagem e um carrinho arrastável">
@@ -306,7 +317,7 @@ footer{margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--line);color
       </g>
     </g>
   </svg>
-  <div class="legend"><span><i class="lg solid"></i>mudança de base (carro)</span><span><i class="lg dash"></i>bate-volta (carro)</span><span><i class="lg dot"></i>avião / ferry</span><span><i class="lg num">3</i>número do trecho</span></div>
+  <div class="legend"><span><i class="lg solid"></i>mudança de base (carro)</span><span><i class="lg dash"></i>bate-volta (carro)</span><span><i class="lg num">3</i>número do trecho</span></div>
   <div id="mapa-info" class="mapinfo" hidden></div>
   </div>
   <h3>Percurso, trecho a trecho</h3>
@@ -412,9 +423,9 @@ const DAYS=[
  ['🛌','Soneca',['Em casa até 13h; almoço nos quiosques no caminho.']],
  ['🐟','Noite',[`<a href="${gm('Pasta y Pueblo Fajardo')}">Pasta y Pueblo</a> ou <a href="${gm('Boardriders Luquillo')}">Boardriders</a>.`]]]},
 {id:'2712',img:'flamenco',w:'dom',d:'27/12',b:2,t:'Culebra e a praia de Flamenco',who:'6 adultos + bebê',e:'e1',bl:[
- ['✈️','Como ir',[`<b>Mamãe, bebê, enjoados:</b> voo de 15 min Ceiba→Culebra, <a href="https://www.viequesairlink.com/">Vieques Air Link</a> ou <a href="https://www.airflamenco.net/">Air Flamenco</a>, ~US$ 50–90/trecho.`,`<b>Econômico:</b> <a href="https://puertoricoferry.com/en/buy-tickets/ceiba-culebra/">ferry de Ceiba</a> 8h (US$ 2,25; 60+ US$ 1; bebê grátis). Chegar 1 h antes; esgota semanas antes.`,'Van pública até Flamenco ~US$ 5.']],
+ ['✈️','Como ir',[`<b>De barco:</b> <a href="https://puertoricoferry.com/en/buy-tickets/ceiba-culebra/">ferry público de Ceiba</a> às 8h (US$ 2,25; 60+ US$ 1; bebê grátis), 45–90 min. Carro fica no estacionamento pago do terminal. Chegar 1 h antes; bilhetes para não residentes esgotam semanas antes.`,`<b>Se o mar estiver feio ou alguém enjoar:</b> voo de 15 min Ceiba→Culebra, <a href="https://www.viequesairlink.com/">Vieques Air Link</a> ou <a href="https://www.airflamenco.net/">Air Flamenco</a>, ~US$ 50–90/trecho.`,'Van pública até Flamenco ~US$ 5.']],
  ['🏝','Praia',[`<a href="https://www.discoverpuertorico.com/profile/flamenco-beach/8068">Flamenco</a>: rasa, quiosques, sombra. Tenda de praia = soneca ali mesmo. Tanques enferrujados na ponta oeste para os casais.`]],
- ['🔁','Volta',['Voo 15h–16h ou ferry da tarde.',`Alternativa só para casais: <a href="https://www.expedia.com/things-to-do/culebra-day-trip-by-catamaran.a487914.activity-details">catamarã de Fajardo</a> (~US$ 180, 6 h).`]]]},
+ ['🔁','Volta',['Ferry da tarde (conferir horário na compra); voo como plano B.',`Alternativa só para casais: <a href="https://www.expedia.com/things-to-do/culebra-day-trip-by-catamaran.a487914.activity-details">catamarã de Fajardo</a> (~US$ 180, 6 h).`]]]},
 {id:'2812',img:'mascaras',w:'seg',d:'28/12',b:3,t:'Máscaras de Hatillo e travessia para o oeste',who:'6 adultos + bebê',e:'e1',bl:[
  ['🎭','Manhã',[`Sair 7h. 9h em <a href="https://rove.me/es/to/puerto-rico/festival-de-las-mascaras-de-hatillo">Hatillo</a>: comparsas mascaradas pelas ruas de manhã (desfile grande 14h lota). Ver da praça, a distância da bebê.`,`Plano B sem multidão: <a href="https://www.discoverpuertorico.com/profile/gozalandia-waterfalls/9014">Gozalandia</a> (US$ 10; escada; vovó no restaurante).`]],
  ['🛌','Soneca',[`No carro: Hatillo → Boquerón 1h45. Parada opcional em <a href="https://www.discoverpuertorico.com/profile/crash-boat-beach/8056">Crash Boat</a>.`]],
@@ -434,9 +445,9 @@ const DAYS=[
 {id:'0101',img:'escambron',w:'sex',d:'01/01',b:4,t:'Dia de descanso',who:'6 adultos + bebê',e:'e1',bl:[
  ['☀️','Dia',[`Manhã lenta, Escambrón ou Ocean Park. Opcional: caiaque na <a href="${gm('Laguna del Condado kayak')}">Laguna do Condado</a> (peixes-boi).`]],
  ['🥂','Noite',[`Despedida do casal A: <a href="${gm('Santaella Santurce')}">Santaella</a> ou <a href="${gm('Marmalade Old San Juan')}">Marmalade</a> (reservar).`]]]},
-{id:'0201',img:'esperanza',w:'sáb',d:'02/01',b:5,t:'Casal A parte, o resto voa para Vieques',who:'4 adultos + bebê',e:'e1',bl:[
- ['✈️','Manhã',[`Casal A ao SJU; devolver a van. <a href="https://www.capeair.com/">Cape Air</a> SJU→Vieques (25 min, ~US$ 100–130/trecho). <a href="https://www.viequesairlink.com/">VAL</a> sai do Isla Grande (centro), não do SJU.`]],
- ['🛌','Soneca',['Check-in em Esperanza (15 min) e soneca. Jipe retirado no aeroporto.']],
+{id:'0201',img:'esperanza',w:'sáb',d:'02/01',b:5,t:'Casal A parte, o resto vai de ferry para Vieques',who:'4 adultos + bebê',e:'e1',bl:[
+ ['⛴️','Manhã',[`Casal A ao SJU cedo. O resto segue de carro a Ceiba (1 h), deixa a van no estacionamento pago do terminal e pega o <a href="https://puertoricoferry.com/en/buy-tickets/ceiba-vieques/">ferry de Ceiba a Vieques</a> (30–45 min, ~US$ 2; chegar 1 h antes; comprar assim que abrir a venda). Carros alugados não embarcam.`,`Plano B de conforto: <a href="https://www.capeair.com/">Cape Air</a> SJU→Vieques, 25 min, ~US$ 100–130/trecho.`]],
+ ['🛌','Soneca',['Jipe retirado no porto de Isabel II; Esperanza fica a 15 min. Check-in e soneca.']],
  ['🌅','Tarde',[`<a href="${gm('Malecon de Esperanza Vieques')}">Malecón de Esperanza</a>. Jantar no <a href="${gm('El Quenepo Vieques')}">El Quenepo</a> (reservar) ou <a href="${gm('Bananas Vieques')}">Bananas</a>.`]]]},
 {id:'0301',img:'caracas',w:'dom',d:'03/01',b:5,t:'Praias do refúgio e Mosquito Bay',who:'4 adultos + bebê',e:'e1 bio',bl:[
  ['🐴','Manhã',[`<a href="https://www.fws.gov/refuge/vieques">Refúgio de Vieques</a> 9h: <a href="${gm('Playa Caracas Red Beach Vieques')}">Playa Caracas</a> (asfalto até a areia, quiosques de sombra, rasa). Cavalos soltos. Casais: <a href="${gm('Playa La Chiva Vieques')}">La Chiva</a>.`]],
@@ -444,10 +455,10 @@ const DAYS=[
  ['🌌','Noite',[`Mosquito Bay de <b>lancha elétrica</b>: <a href="https://www.biobay.com/">Island Adventures Biobay</a> (busca em Esperanza, 1 h; ~US$ 100 adulto). 4 noites da lua nova: escuro total. Plano B casais: caiaque transparente <a href="https://www.abessnorkeling.com/">Abe's</a>.`]]]},
 {id:'0401',img:'sunbay',w:'seg',d:'04/01',b:5,t:'Sun Bay e volta para perto do aeroporto',who:'4 adultos + bebê',e:'e1',bl:[
  ['🏖','Manhã',[`<a href="${gm('Sun Bay Vieques')}">Sun Bay</a>: 1,5 km, cavalos na areia, banheiros. Café no malecón.`]],
- ['✈️','Tarde',['Devolver o jipe; voo Vieques→SJU; hotel em Isla Verde (5 min do aeroporto).','Variante: 3ª noite em Vieques se o voo do dia 5 sair depois das 15h (menos seguro).']],
+ ['⛴️','Tarde',['Devolver o jipe no porto; ferry Vieques→Ceiba no começo da tarde; pegar a van e dirigir 1 h até o hotel em Isla Verde (5 min do aeroporto).','Variante: 3ª noite em Vieques e ferry das 6h no dia 5, só se o voo internacional sair depois das 15h (menos seguro).']],
  ['🌙','Noite',['Último jantar na praia de Isla Verde. Malas.']]]},
 {id:'0501',img:'islaverde',w:'ter',d:'05/01',b:5,t:'Partida',who:'4 adultos + bebê',e:'',bl:[
- ['🛫','Dia',['Uber de 5 min ao SJU; 3 h antes em voo internacional. Véspera de Reis: capim debaixo da cama para os camelos.']]]},
+ ['🛫','Dia',['Devolver a van no SJU (5 min); 3 h antes em voo internacional. Véspera de Reis: capim debaixo da cama para os camelos.']]]},
 ];
 const BASECLS={1:'b1',2:'b2',3:'b3',4:'b4',5:'b5'};
 const ENAME={e1:'leve',e2:'moderado',e3:'opcional',bio:'bio bay'};
@@ -493,17 +504,17 @@ function selectDay(id){
     g.addEventListener('click',()=>go(p));g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go(p);}});pins.appendChild(g);});
   /* trechos do percurso */
   const LEGS=[
-    {n:1,date:'18/12',day:'1812',from:'Aeroporto SJU',to:'San Juan (Condado)',mode:'move',time:'15 min',col:'#12b5b0',d:'M740 70 L712 90',end:[710,91]},
+    {n:1,date:'18/12',day:'1812',from:'Aeroporto SJU',to:'San Juan (Condado)',mode:'move',time:'15 min',col:'#12b5b0',d:'M745 80 L712 90',end:[710,91]},
     {n:2,date:'21/12',day:'2112',from:'San Juan',to:'Arecibo (Cueva Ventana) e volta',mode:'trip',time:'1h15 cada',col:'#ffc531',d:'M710 91 C620 70 480 70 383 126',end:[383,126]},
     {n:3,date:'24/12',day:'2412',from:'San Juan',to:'Luquillo',mode:'move',time:'45 min',col:'#4cae3f',d:'M710 91 C780 90 840 110 884 143',end:[884,143]},
     {n:4,date:'26/12',day:'2612',from:'Luquillo',to:'El Yunque e volta',mode:'trip',time:'25 min cada',col:'#ffc531',d:'M884 143 C870 160 860 170 848 183',end:[848,183]},
-    {n:5,date:'27/12',day:'2712',from:'Luquillo → Ceiba (30 min)',to:'Culebra, de avião ou ferry',mode:'fly',time:'15 min voo / 1h ferry',col:'#9b6cf0',d:'M884 143 L920 166 C980 140 1040 150 1099 177',end:[1099,177]},
+    {n:5,date:'27/12',day:'2712',from:'Luquillo',to:'Ceiba (ferry para Culebra) e volta',mode:'trip',time:'30 min cada',col:'#ffc531',d:'M884 143 C900 150 912 158 920 166',end:[920,166]},
     {n:6,date:'28/12',day:'2812',from:'Luquillo',to:'Hatillo (2h) → Boquerón (1h45)',mode:'move',time:'3h45 + paradas',col:'#e0a800',d:'M884 143 C800 90 600 60 316 80 C200 90 110 120 95 200 C90 260 95 320 142 337',end:[142,337]},
     {n:7,date:'29/12',day:'2912',from:'Boquerón',to:'Farol de Cabo Rojo e volta',mode:'trip',time:'20 min cada',col:'#ffc531',d:'M142 337 C128 355 125 375 132 394',end:[132,394]},
     {n:8,date:'30/12',day:'3012',from:'Boquerón',to:'Guánica de manhã, La Parguera à noite',mode:'trip',time:'50 min / 35 min',col:'#ffc531',d:'M142 337 C170 360 190 380 203 371 C230 380 255 380 275 371',end:[275,371]},
     {n:9,date:'31/12',day:'3112',from:'Boquerón',to:'Ponce (1h) → San Juan (1h20)',mode:'move',time:'2h20 + Ponce',col:'#ff5fa2',d:'M142 337 C200 390 330 372 429 349 C520 250 620 150 710 91',end:[710,91]},
-    {n:10,date:'02/01',day:'0201',from:'San Juan (devolve o carro no SJU)',to:'Vieques, de avião',mode:'fly',time:'25 min voo',col:'#9b6cf0',d:'M710 91 C820 150 920 250 1012 297',end:[1012,297]},
-    {n:11,date:'04/01',day:'0401',from:'Vieques, de avião',to:'SJU → hotel em Isla Verde (5 min)',mode:'fly',time:'25 min voo',col:'#9b6cf0',d:'M1012 297 C930 230 820 130 745 80',end:[745,80]},
+    {n:10,date:'02/01',day:'0201',from:'San Juan',to:'Ceiba (van fica no terminal; ferry para Vieques)',mode:'move',time:'1h',col:'#9b6cf0',d:'M710 91 C780 90 840 110 884 143 C900 150 912 158 920 166',end:[920,166]},
+    {n:11,date:'04/01',day:'0401',from:'Ceiba (volta do ferry)',to:'Hotel em Isla Verde',mode:'move',time:'1h',col:'#12b5b0',d:'M920 166 C880 125 810 98 764 87',end:[762,86]},
   ];
   const rota=$('#rota'),legsEl=$('#legs');
   LEGS.forEach(l=>{
@@ -512,31 +523,31 @@ function selectDay(id){
     const path=document.createElementNS(NS,'path');path.setAttribute('d',l.d);path.setAttribute('class',l.mode);path.setAttribute('stroke',l.col);path.setAttribute('marker-end','url(#arr'+l.n+')');path.dataset.n=l.n;path.addEventListener('click',()=>selLeg(l));rota.appendChild(path);
     const len=path.getTotalLength();const m=path.getPointAtLength(len*0.5);
     const g=document.createElementNS(NS,'g');g.setAttribute('class','badge');g.dataset.n=l.n;g.innerHTML=`<circle cx="${m.x}" cy="${m.y}" r="11"/><text x="${m.x}" y="${m.y}">${l.n}</text>`;g.addEventListener('click',()=>selLeg(l));g.style.cursor='pointer';rota.appendChild(g);
-    if(l.mode==='fly'){const q=path.getPointAtLength(len*0.72);const t=document.createElementNS(NS,'text');t.setAttribute('x',q.x);t.setAttribute('y',q.y-10);t.setAttribute('class','plane');t.setAttribute('text-anchor','middle');t.textContent='✈️';rota.appendChild(t);}
     const b=document.createElement('button');b.className='leg';b.style.borderLeftColor=l.col;b.dataset.n=l.n;b.setAttribute('aria-pressed','false');
-    b.innerHTML=`<span class="n">${l.n}</span><span><span class="w">${l.date} · ${l.mode==='move'?'mudança de base':l.mode==='trip'?'bate-volta':'avião / ferry'}</span><b>${l.from} → ${l.to}</b></span><span class="tm">${l.time}</span>`;
+    b.innerHTML=`<span class="n">${l.n}</span><span><span class="w">${l.date} · ${l.mode==='move'?'mudança de base':'bate-volta'}</span><b>${l.from} → ${l.to}</b></span><span class="tm">${l.time}</span>`;
     b.addEventListener('click',()=>selLeg(l));legsEl.appendChild(b);
   });
   /* paradas, em ordem, com o caminho desenhado a partir da parada anterior */
   const STOPS=[
-    {city:'San Juan',when:'18 → 24/12',n:'6 noites',ev:'Velha San Juan iluminada de Natal, Bacardí, Escambrón',pin:'San Juan',pt:[710,91],d:null},
-    {city:'Arecibo · Cueva Ventana',when:'21/12 · bate-volta',n:'1 dia',ev:'Caverna-janela sobre o vale (ou Toro Verde para os jovens)',pin:'Arecibo · Cueva Ventana',pt:[383,126],d:'M710 91 C620 70 480 70 383 126'},
-    {city:'Luquillo',when:'24 → 28/12',n:'4 noites',ev:'Nochebuena em casa, praia La Monserrate e quiosques',pin:'Luquillo',pt:[884,143],d:'M383 126 C480 70 620 70 710 91 C780 90 840 110 884 143'},
-    {city:'El Yunque',when:'26/12 · bate-volta',n:'1 manhã',ev:'Floresta tropical: La Coca, Yokahú, Angelito Trail',pin:'El Yunque',pt:[848,183],d:'M884 143 C870 160 860 170 848 183'},
-    {city:'Culebra · Flamenco',when:'27/12 · bate-volta',n:'1 dia',ev:'Praia de Flamenco, de avião (15 min) ou ferry',pin:'Culebra · Flamenco',pt:[1099,177],d:'M848 183 C860 170 870 160 884 143 L920 166 C980 140 1040 150 1099 177'},
-    {city:'Hatillo',when:'28/12 · parada no caminho',n:'1 manhã',ev:'Festival de las Máscaras (comparsas da manhã)',pin:'Hatillo',pt:[316,80],d:'M1099 177 C1040 150 980 140 920 166 L884 143 C800 90 600 60 316 80'},
-    {city:'Boquerón',when:'28 → 31/12',n:'3 noites',ev:'Praia rasa e sem onda, ostras no povoado',pin:'Boquerón',pt:[142,337],d:'M316 80 C200 90 110 120 95 200 C90 260 95 320 142 337'},
-    {city:'Cabo Rojo · Playa Sucia',when:'29/12 · bate-volta',n:'1 manhã',ev:'Farol Los Morrillos, falésias e salinas cor-de-rosa',pin:'Cabo Rojo · Playa Sucia',pt:[132,394],d:'M142 337 C128 355 125 375 132 394'},
-    {city:'Guánica e La Parguera',when:'30/12 · bate-volta',n:'1 dia + noite',ev:'Bosque Seco de manhã, baía bioluminescente de barco à noite',pin:'La Parguera',pt:[203,371],d:'M132 394 C125 375 128 355 142 337 C170 360 190 380 203 371'},
-    {city:'Ponce',when:'31/12 · parada no caminho',n:'1 manhã',ev:'Plaza Las Delicias e Parque de Bombas',pin:'Ponce',pt:[429,349],d:'M203 371 C230 380 255 380 275 371 C330 372 380 360 429 349'},
-    {city:'San Juan',when:'31/12 → 02/01',n:'2 noites',ev:'Réveillon com fogos na Lagoa do Condado; despedida do casal A',pin:'San Juan',pt:[710,91],d:'M429 349 C520 250 620 150 710 91'},
-    {city:'Vieques · Esperanza',when:'02 → 04/01',n:'2 noites',ev:'Mosquito Bay de lancha elétrica, praias com cavalos',pin:'Vieques · Esperanza',pt:[1012,297],d:'M710 91 C820 150 920 250 1012 297'},
-    {city:'Isla Verde (aeroporto)',when:'04 → 05/01',n:'1 noite',ev:'Último jantar na praia e voo de volta no dia 5',pin:'San Juan',pt:[745,80],d:'M1012 297 C930 230 820 130 745 80'},
+    {city:'San Juan',when:'18 → 24/12',n:'6 noites',ev:'Velha San Juan iluminada de Natal, Bacardí, Escambrón',pin:'San Juan',leg:{ico:'🚗',dep:'pouso',from:'Aeroporto SJU',dur:'15 min',arr:'+15 min',to:'Condado'},pt:[710,91],d:null},
+    {city:'Arecibo · Cueva Ventana',when:'21/12 · bate-volta',n:'1 dia',ev:'Caverna-janela sobre o vale (ou Toro Verde para os jovens)',pin:'Arecibo · Cueva Ventana',leg:{ico:'🚗',dep:'08:30',from:'San Juan',dur:'1h15',arr:'09:45',to:'Arecibo'},back:{dep:'13:00',dur:'1h15',arr:'14:15',to:'San Juan'},pt:[383,126],d:'M710 91 C620 70 480 70 383 126'},
+    {city:'Luquillo',when:'24 → 28/12',n:'4 noites',ev:'Nochebuena em casa, praia La Monserrate e quiosques',pin:'Luquillo',leg:{ico:'🚗',dep:'10:00',from:'San Juan (check-out)',dur:'45 min',arr:'10:45',to:'Luquillo (quiosques)'},pt:[884,143],d:'M383 126 C480 70 620 70 710 91 C780 90 840 110 884 143'},
+    {city:'El Yunque',when:'26/12 · bate-volta',n:'1 manhã',ev:'Floresta tropical: La Coca, Yokahú, Angelito Trail',pin:'El Yunque',leg:{ico:'🚗',dep:'07:30',from:'Luquillo',dur:'25 min',arr:'08:00',to:'Portão da PR-191'},back:{dep:'12:30',dur:'25 min',arr:'13:00',to:'Luquillo (soneca)'},pt:[848,183],d:'M884 143 C870 160 860 170 848 183'},
+    {city:'Culebra · Flamenco',when:'27/12 · bate-volta',n:'1 dia',ev:'A van fica em Ceiba; ferry até a praia de Flamenco (avião só se o mar estiver feio)',pin:'Culebra · Flamenco',leg:{ico:'⛴️',dep:'06:30',from:'Luquillo → Ceiba 07:00',dur:'ferry 08:00, 45–90 min',arr:'~09:15',to:'Culebra → Flamenco'},back:{dep:'ferry da tarde',dur:'~1h + 30 min carro',arr:'~17:30',to:'Luquillo'},pt:[920,166],d:'M848 183 C860 170 870 160 884 143 C900 150 912 158 920 166'},
+    {city:'Hatillo',when:'28/12 · parada no caminho',n:'1 manhã',ev:'Festival de las Máscaras (comparsas da manhã)',pin:'Hatillo',leg:{ico:'🚗',dep:'07:00',from:'Luquillo',dur:'2h',arr:'09:00',to:'Hatillo (festival)'},pt:[316,80],d:'M920 166 C912 158 900 150 884 143 C800 90 600 60 316 80'},
+    {city:'Boquerón',when:'28 → 31/12',n:'3 noites',ev:'Praia rasa e sem onda, ostras no povoado',pin:'Boquerón',leg:{ico:'🚗',dep:'12:00',from:'Hatillo',dur:'1h45',arr:'13:45',to:'Boquerón (soneca no carro)'},pt:[142,337],d:'M316 80 C200 90 110 120 95 200 C90 260 95 320 142 337'},
+    {city:'Cabo Rojo · Playa Sucia',when:'29/12 · bate-volta',n:'1 manhã',ev:'Farol Los Morrillos, falésias e salinas cor-de-rosa',pin:'Cabo Rojo · Playa Sucia',leg:{ico:'🚗',dep:'08:30',from:'Boquerón',dur:'20 min',arr:'08:50',to:'Farol Los Morrillos'},back:{dep:'12:30',dur:'20 min',arr:'12:50',to:'Boquerón'},pt:[132,394],d:'M142 337 C128 355 125 375 132 394'},
+    {city:'Guánica e La Parguera',when:'30/12 · bate-volta',n:'1 dia + noite',ev:'Bosque Seco de manhã, baía bioluminescente de barco à noite',pin:'La Parguera',leg:{ico:'🚗',dep:'08:30',from:'Boquerón',dur:'50 min',arr:'09:20',to:'Bosque Seco de Guánica'},back:{dep:'18:00',dur:'35 min',arr:'18:35',to:'La Parguera (volta 21:30 → 22:05)'},pt:[203,371],d:'M132 394 C125 375 128 355 142 337 C170 360 190 380 203 371'},
+    {city:'Ponce',when:'31/12 · parada no caminho',n:'1 manhã',ev:'Plaza Las Delicias e Parque de Bombas',pin:'Ponce',leg:{ico:'🚗',dep:'09:00',from:'Boquerón (check-out)',dur:'1h',arr:'10:00',to:'Ponce, Plaza Las Delicias'},pt:[429,349],d:'M203 371 C230 380 255 380 275 371 C330 372 380 360 429 349'},
+    {city:'San Juan',when:'31/12 → 02/01',n:'2 noites',ev:'Réveillon com fogos na Lagoa do Condado; despedida do casal A',pin:'San Juan',leg:{ico:'🚗',dep:'13:00',from:'Ponce',dur:'1h20',arr:'14:20',to:'San Juan (Condado)'},pt:[710,91],d:'M429 349 C520 250 620 150 710 91'},
+    {city:'Vieques · Esperanza',when:'02 → 04/01',n:'2 noites',ev:'Van fica em Ceiba; ferry de 30–45 min. Mosquito Bay de lancha elétrica, praias com cavalos',pin:'Vieques · Esperanza',leg:{ico:'⛴️',dep:'~09:30',from:'San Juan → Ceiba (1h de carro)',dur:'30–45 min de ferry',arr:'~12:00',to:'Vieques (Isabel II) → Esperanza 15 min'},pt:[920,166],d:'M710 91 C780 90 840 110 884 143 C900 150 912 158 920 166'},
+    {city:'Isla Verde (aeroporto)',when:'04 → 05/01',n:'1 noite',ev:'Último jantar na praia; van devolvida no SJU no dia 5',pin:'San Juan',leg:{ico:'⛴️',dep:'~13:30',from:'Vieques (ferry)',dur:'45 min + 1h de carro',arr:'~15:30',to:'Hotel em Isla Verde'},pt:[762,86],d:'M920 166 C880 125 810 98 764 87'},
   ];
   let step=0,anim=null;
   const panel=$('#stPanel'),btnPrev=$('#stPrev'),btnNext=$('#stNext');
   function renderStep(){const st=STOPS[step];
-    panel.innerHTML=`<div class="eyebrow">Parada ${step+1} de ${STOPS.length} · ${st.when}</div><b>${st.city}</b><div class="ev"><span class="nights">${st.n}</span> · ${st.ev} <button class="btn sm" id="stOpen">ver programação</button></div>`;
+    const L=st.leg;const trip=`<div class="trip"><div class="tbox"><b>${L.dep}</b><span>${L.from}</span></div><div class="tline"><span class="dur">${L.ico} ${L.dur}</span></div><div class="tbox"><b>${L.arr}</b><span>${L.to}</span></div></div>${st.back?`<div class="back">↩ volta: <b>${st.back.dep}</b> → ${st.back.dur} → <b>${st.back.arr}</b> ${st.back.to}</div>`:''}`;
+    panel.innerHTML=`<div class="eyebrow">Parada ${step+1} de ${STOPS.length} · ${st.when}</div><b>${st.city}</b><div class="ev"><span class="nights">${st.n}</span> · ${st.ev} <button class="btn sm" id="stOpen">ver programação</button></div>${trip}`;
     $('#stOpen').onclick=()=>{const pp=D.find(x=>x.n===st.pin);if(pp)go(pp);};
     btnPrev.disabled=step===0;btnNext.disabled=step===STOPS.length-1;
     document.querySelectorAll('.pin').forEach(el=>el.classList.toggle('on',el.getAttribute('aria-label')===st.pin));}
@@ -600,15 +611,15 @@ const TASKS=[
  {id:'t02',o:'laura',due:'2026-10-31',t:'Casa em Luquillo / Río Grande 24→28/12 (Natal)',d:'3 quartos + piscina, condomínio fechado entre a praia e a PR-191.',l:[['Airbnb Luquillo',AB('2026-12-24','2026-12-28','Luquillo--Puerto-Rico')],['Vrbo Luquillo','https://www.vrbo.com/search?destination=Luquillo%2C%20Puerto%20Rico&startDate=2026-12-24&endDate=2026-12-28&adults=6'],['Palm Beach Villa 3BR','https://www.vrbo.com/2974929'],['Hotéis ≤100 Booking',BKA('Luquillo, Puerto Rico','2026-12-24','2026-12-28')]]},
  {id:'t03',o:'laura',due:'2026-10-31',t:'Casa em Boquerón (Cabo Rojo) 28→31/12',d:'3 quartos com piscina, a pé do povoado. Alternativa: Copamarina em Guánica.',l:[['Airbnb Boquerón',AB('2026-12-28','2026-12-31','Boqueron--Cabo-Rojo--Puerto-Rico')],['Villa MiCasaSuCasa','https://www.vrbo.com/2266309'],['3BR a pé do povoado','https://www.airbnb.com/rooms/5909524'],['Copamarina','https://www.copamarina.com/'],['Hotéis ≤100 Booking',BKA('Boqueron, Cabo Rojo, Puerto Rico','2026-12-28','2026-12-31')]]},
  {id:'t04',o:'laura',due:'2026-10-31',t:'Apartamento em San Juan 31/12→02/01 (Réveillon)',d:'Mesmo prédio ou o mesmo apartamento de dezembro, se o anfitrião topar. Perto da Lagoa do Condado para ver os fogos a pé.',l:[['Airbnb Condado',AB('2026-12-31','2027-01-02','Condado--San-Juan--Puerto-Rico')],['Hotéis ≤100 Booking',BKA('Condado, San Juan, Puerto Rico','2026-12-31','2027-01-02')]]},
- {id:'t05',o:'laura',due:'2026-10-31',t:'Van de 8 lugares (ou SUV + compacto) 18/12→02/01 no SJU',d:'6 adultos + cadeirinha + malas. Devolução no SJU em 02/01. AutoExpreso incluso.',l:[['Discover Cars','https://www.discovercars.com/puerto-rico/san-juan/sju'],['Charlie Car Rental','https://www.charliecars.com/'],['Kayak SJU','https://www.kayak.com/San-Juan-Luis-Munoz-Marin-Intl-Airport-Car-Rentals.SJU.cap.ksp']]},
+ {id:'t05',o:'laura',due:'2026-10-31',t:'Van de 8 lugares (ou SUV + compacto) 18/12→05/01 no SJU',d:'6 adultos + cadeirinha + malas. Fica estacionada em Ceiba enquanto o grupo está em Vieques (02–04/01); devolução no SJU na partida. AutoExpreso incluso.',l:[['Discover Cars','https://www.discovercars.com/puerto-rico/san-juan/sju'],['Charlie Car Rental','https://www.charliecars.com/'],['Kayak SJU','https://www.kayak.com/San-Juan-Luis-Munoz-Marin-Intl-Airport-Car-Rentals.SJU.cap.ksp']]},
  {id:'t06',o:'laura',due:'2026-11-15',t:'Hotel em Isla Verde 04→05/01 (última noite, 2 quartos)',d:'A 5 min do aeroporto; pedir berço.',l:[['Courtyard Isla Verde','https://www.marriott.com/en-us/hotels/sjuir-courtyard-isla-verde-beach-resort/overview/'],['Verdanza','https://www.verdanzahotel.com/'],['Hotéis ≤100 Booking',BKA('Isla Verde, Carolina, Puerto Rico','2027-01-04','2027-01-05')]]},
  {id:'t07',o:'laura',due:'2026-11-30',t:'Seguro-viagem com cobertura nos EUA para todos',d:'Porto Rico é território americano: hospital é caro sem seguro. Incluir a bebê e a mamãe.',l:[['Comparar seguros','https://www.google.com/search?q=seguro+viagem+estados+unidos+comparar']]},
  {id:'t08',o:'laura',due:'2026-12-10',t:'Confirmar berço, blackout e early check-in com cada anfitrião',d:'Mensagem para os 5 anfitriões/hotéis. Pedir foto do quarto da bebê com a persiana fechada.',l:[['SlumberPod (plano B)','https://www.slumberpod.com/']]},
- {id:'t09',o:'amanda',due:'2026-10-31',t:'Voos Cape Air SJU→Vieques 02/01 e Vieques→SJU 04/01',d:'4 adultos + bebê de colo. Limite de bagagem por peso: malas leves.',l:[['Cape Air','https://www.capeair.com/'],['Vieques Air Link (sai do Isla Grande)','https://www.viequesairlink.com/'],['Skyscanner SJU–VQS','https://www.skyscanner.com/routes/sjua/vqs/san-juan-to-vieques.html']]},
+ {id:'t09',o:'amanda',due:'2026-10-31',t:'Ferry Ceiba→Vieques 02/01 e Vieques→Ceiba 04/01 (4 adultos + bebê)',d:'~US$ 2 por pessoa, 30–45 min. Bilhetes de não residentes esgotam: comprar no dia em que a venda abrir. Chegar 1 h antes, sem reembolso. Plano B: Cape Air SJU→Vieques.',l:[['Ferry Ceiba–Vieques','https://puertoricoferry.com/en/buy-tickets/ceiba-vieques/'],['Horários e regras','https://puertoricoferry.com/en/routes-schedules/'],['Plano B: Cape Air','https://www.capeair.com/']]},
  {id:'t10',o:'amanda',due:'2026-10-31',t:'Lancha elétrica em Mosquito Bay, 03/01',d:'Island Adventures Biobay, busca em Esperanza. Esgota na semana do Ano-Novo. Confirmar se levam bebê de colo.',l:[['biobay.com','https://www.biobay.com/'],['Mesma lancha no Expedia','https://www.expedia.com/things-to-do/1-hour-bioluminescent-boat-tour-in-mosquito-bay.a5276078.activity-details'],['Plano B: Abe\'s (caiaque)','https://www.abessnorkeling.com/']]},
  {id:'t11',o:'amanda',due:'2026-10-31',t:'Hospedagem em Vieques 02→04/01 (Esperanza)',d:'4 adultos + bebê: casa de 2 quartos ou 2 quartos de hotel com cozinha.',l:[['Airbnb Esperanza',AB('2027-01-02','2027-01-04','Esperanza--Vieques--Puerto-Rico',4).replace('min_bedrooms=3','min_bedrooms=2')],['Malecón House',gm('Malecon House Vieques')],['Sea Gate Hotel',gm('Sea Gate Hotel Vieques')],['Hotéis ≤120 Booking',BKA('Esperanza, Vieques, Puerto Rico','2027-01-02','2027-01-04').replace('min-100','min-120')]]},
- {id:'t12',o:'amanda',due:'2026-11-15',t:'Culebra 27/12: voo Ceiba↔Culebra ou ferry',d:'Voo para mamãe + bebê (VAL/Air Flamenco); ferry das 8h para o resto, comprar assim que abrir a venda.',l:[['Vieques Air Link','https://www.viequesairlink.com/'],['Air Flamenco','https://www.airflamenco.net/'],['Ferry Ceiba–Culebra','https://puertoricoferry.com/en/buy-tickets/ceiba-culebra/']]},
- {id:'t13',o:'amanda',due:'2026-11-15',t:'Jipe em Vieques 02→04/01, retirada no aeroporto',d:'Jipes esgotam em janeiro; Maritza\'s só funciona 8h–18h.',l:[['Maritza\'s',gm("Maritza's Car Rental Vieques")],['Vieques Car Rental',gm('Vieques Car Rental')],['Avis Vieques','https://www.avis.com/en/locations/lat/pr/vieques']]},
+ {id:'t12',o:'amanda',due:'2026-11-15',t:'Ferry Ceiba↔Culebra 27/12 (ida 8h, volta à tarde)',d:'6 adultos + bebê. Comprar assim que abrir a venda. Se o mar estiver feio, trocar por voo de 15 min (VAL / Air Flamenco).',l:[['Ferry Ceiba–Culebra','https://puertoricoferry.com/en/buy-tickets/ceiba-culebra/'],['Plano B: Vieques Air Link','https://www.viequesairlink.com/'],['Plano B: Air Flamenco','https://www.airflamenco.net/']]},
+ {id:'t13',o:'amanda',due:'2026-11-15',t:'Jipe em Vieques 02→04/01, retirada no porto de Isabel II',d:'Jipes esgotam em janeiro; Maritza\'s só funciona 8h–18h.',l:[['Maritza\'s',gm("Maritza's Car Rental Vieques")],['Vieques Car Rental',gm('Vieques Car Rental')],['Avis Vieques','https://www.avis.com/en/locations/lat/pr/vieques']]},
  {id:'t14',o:'amanda',due:'2026-12-10',t:'Kit da bebê: cadeirinha, SlumberPod/blackout, ruído branco, tenda de praia UV',d:'Cadeirinha própria viaja grátis na maioria das companhias.',l:[['SlumberPod','https://www.slumberpod.com/']]},
  {id:'t15',o:'victor',due:'2026-11-15',t:'Barco na baía bioluminescente de La Parguera, 30/12 às 19h30',d:'Barco de fundo de vidro, US$ 10–20/pessoa. Confirmar que aceitam bebê e que há assento.',l:[['Jellyfish Tours','https://jellyfishtourspr.rezdy.com/index'],['Johnny\'s Boats',gm("Johnny's Boats La Parguera")],['Paradise Scuba',gm('Paradise Scuba La Parguera')]]},
  {id:'t16',o:'victor',due:'2026-11-30',t:'Plano El Yunque 26/12 + guia opcional para os casais',d:'Confirmar que segue sem reserva; horário dos portões; mapa das paradas. Tours To Do PR (US$ 59–75) para quem quiser o tobogã.',l:[['Página oficial El Yunque','https://www.fs.usda.gov/r08/elyunque'],['Tours To Do PR','https://www.expedia.com/things-to-do/small-group-el-yunque-rainforest-tour-with-transport.a45031557.activity-details'],['Angelito Trail',gm('Angelito Trail El Yunque')]]},
